@@ -15,8 +15,7 @@
 #import "XPCUSERProto.h"
 #import "XPCDaemonProto.h"
 
-//signing auth
-#define SIGNING_AUTH @"Developer ID Application: Objective-See, LLC (VBG97UB4TA)"
+//signing auth (kept for reference; XPC validation uses SIGNING_TEAM_ID from Consts.h)
 
 //interface for 'extension' to NSXPCConnection
 // allows us to access the 'private' auditToken iVar
@@ -128,7 +127,7 @@ bail:
     logMsg(LOG_DEBUG, @"received request to connect to XPC interface");
     
     //init signing req string
-    requirementString = [NSString stringWithFormat:@"anchor trusted and certificate leaf [subject.CN] = \"%@\"", SIGNING_AUTH];
+    requirementString = [NSString stringWithFormat:@"anchor apple generic and certificate leaf[subject.OU] = \"%@\"", SIGNING_TEAM_ID];
     
     //step 1: create task ref
     // uses NSXPCConnection's (private) 'auditToken' iVar

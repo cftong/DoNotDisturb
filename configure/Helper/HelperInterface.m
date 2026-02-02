@@ -17,8 +17,6 @@
 //script name
 #define CONF_SCRIPT @"configure.sh"
 
-//signing auth
-#define SIGNING_AUTH @"Developer ID Application: Objective-See, LLC (VBG97UB4TA)"
 
 //dispatch source for SIGTERM
 dispatch_source_t dispatchSource = nil;
@@ -259,7 +257,7 @@ bail:
 
     //verify app
     // make sure it's signed, and by our signing auth
-    if(noErr != verifyApp(appCopy, SIGNING_AUTH))
+    if(noErr != verifyApp(appCopy, SIGNING_TEAM_ID))
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to validate %@", appCopy]);

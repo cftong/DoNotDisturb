@@ -120,7 +120,7 @@ bail:
     NSString *requirementString = nil;
     
     //init signing req string
-    requirementString = [NSString stringWithFormat:@"anchor trusted and certificate leaf [subject.CN] = \"%@\"", SIGNING_AUTH];
+    requirementString = [NSString stringWithFormat:@"anchor apple generic and certificate leaf[subject.OU] = \"%@\"", SIGNING_TEAM_ID];
     
     //step 1: create task ref
     // uses NSXPCConnection's (private) 'auditToken' iVar

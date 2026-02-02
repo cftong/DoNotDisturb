@@ -8,7 +8,6 @@
 //
 
 @import Cocoa;
-@import Sentry;
 
 #import "Consts.h"
 #import "Logging.h"
@@ -23,9 +22,6 @@ int main(int argc, const char * argv[])
     
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"STARTED: login item (args: %@)", [[NSProcessInfo processInfo] arguments]]);
-    
-    //init crash reporting
-    initCrashReporting();
     
     //already running?
     if(YES == isAppRunning([[NSBundle mainBundle] bundleIdentifier]))

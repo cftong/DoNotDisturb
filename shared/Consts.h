@@ -17,25 +17,28 @@
 #define OBJECTIVE_SEE_VENDOR "com.objectiveSee"
 
 //installer (helper) ID
-#define INSTALLER_HELPER_ID @"com.objective-see.dnd.installer.helper"
+#define INSTALLER_HELPER_ID @"ca.tarapore.dnd.installer.helper"
 
 //main app bundle id
-#define MAIN_APP_ID @"com.objective-see.dnd"
+#define MAIN_APP_ID @"ca.tarapore.dnd"
 
 //login helper ID
-#define HELPER_ID @"com.objective-see.dnd.helper"
+#define HELPER_ID @"ca.tarapore.dnd.helper"
 
 //launch daemon name
 #define LAUNCH_DAEMON_BINARY @"Do Not Disturb"
 
 //launch daemon plist
-#define LAUNCH_DAEMON_PLIST @"com.objective-see.dnd.plist"
+#define LAUNCH_DAEMON_PLIST @"ca.tarapore.dnd.plist"
 
 //installer (app) ID
-#define INSTALLER_ID @"com.objective-see.dnd.installer"
+#define INSTALLER_ID @"ca.tarapore.dnd.installer"
 
 //signing auth
-#define SIGNING_AUTH @"Developer ID Application: Objective-See, LLC (VBG97UB4TA)"
+#define SIGNING_AUTH @"Developer ID Application: Dharmesh Tarapore (7KGHU7S762)"
+
+//team identifier (works for both Apple Development and Developer ID certs)
+#define SIGNING_TEAM_ID @"7KGHU7S762"
 
 //sentry crash reporting URL
 #define CRASH_REPORTING_URL @"https://b6e82fd3037642edbc63b1ded9be53d3:87738f112d454de5a89a9864aae73b23@sentry.io/289135"
@@ -109,10 +112,10 @@
 #define STATUS_CLIENT_ENABLED 1
 
 //daemon mach name
-#define DAEMON_MACH_SERVICE @"com.objective-see.dndDaemon"
+#define DAEMON_MACH_SERVICE @"ca.tarapore.dndDaemon"
 
 //user (login item) mach name
-#define USER_MACH_SERVICE @"com.objective-see.dndUser"
+#define USER_MACH_SERVICE @"ca.tarapore.dndUser"
 
 //product url
 #define PRODUCT_URL @"https://objective-see.com/products/dnd.html"
@@ -271,13 +274,13 @@
 #define KEY_PHONE_NUMBER @"phone#"
 
 //auth event notification
-#define AUTH_NOTIFICATION @"com.objective-see.dnd.authNotification"
+#define AUTH_NOTIFICATION @"ca.tarapore.dnd.authNotification"
 
 //dismiss event notification
-#define DISMISS_NOTIFICATION @"com.objective-see.dnd.dismissNotification"
+#define DISMISS_NOTIFICATION @"ca.tarapore.dnd.dismissNotification"
 
 //new user/client notification
-#define USER_NOTIFICATION @"com.objective-see.dnd.userNotification"
+#define USER_NOTIFICATION @"ca.tarapore.dnd.userNotification"
 
 //monitoring timeout
 #define MONITORING_TIMEOUT 60*3

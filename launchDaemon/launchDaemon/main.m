@@ -15,9 +15,6 @@
 #import "Preferences.h"
 #import "XPCListener.h"
 #import "UserAuthMonitor.h"
-#import "FrameworkInterface.h"
-
-@import Sentry;
 
 //GLOBALS
 
@@ -30,9 +27,6 @@ Lid* lid = nil;
 
 //user auth event listener
 UserAuthMonitor* userAuthMonitor = nil;
-
-//DND framework interface
-FrameworkInterface* framework = nil;
 
 //dispatch source for SIGTERM
 dispatch_source_t dispatchSource = nil;
@@ -55,9 +49,6 @@ int main(int argc, const char * argv[])
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"STARTED: launch daemon (args: %@)", [[NSProcessInfo processInfo] arguments]]);
         
-        //init crash reporting
-        initCrashReporting();
-        
         //alloc/init/load prefs
         // to here (early) as other logic (below) uses prefs
         preferences = [[Preferences alloc] init];
@@ -72,9 +63,6 @@ int main(int argc, const char * argv[])
         
         //get all current prefs
         currentPrefs = [preferences get:nil];
-        
-        //init framework obj
-        framework = [[FrameworkInterface alloc] init];
         
         //uninstall?
         // delete DND identity and exit
@@ -115,24 +103,6 @@ int main(int argc, const char * argv[])
         // allows to close logging, etc.
         register4Shutdown();
         
-        //1st time identity generatation is done on demand
-        // subsequent times though, can just always do here
-        if(nil != currentPrefs[PREF_CLIENT_ID])
-        {
-            //load identity
-            if(YES != [framework initIdentity:YES])
-            {
-                //err msg
-                logMsg(LOG_ERR, @"failed to generate DND identity");
-                
-                //bail
-                goto bail;
-            }
-            
-            //dbg msg
-            logMsg(LOG_DEBUG, @"initialized DND identity");
-        }
-    
         //init global lid object
         lid = [[Lid alloc] init];
         
@@ -189,62 +159,12 @@ bail:
 }
 
 //uninstall
-// delete DND identity
 BOOL uninstall()
 {
-    //result
-    BOOL uninstalled = NO;
-    
     //dbg msg
     logMsg(LOG_DEBUG, @"performing daemon 'uninstall' logic");
-    
-    //no client id?
-    // no need to delete identity
-    if(nil == [preferences get:nil][PREF_CLIENT_ID])
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"no client ID found, so no identity to delete");
-        
-        //happy
-        uninstalled = YES;
-        
-        //bail
-        goto bail;
-    }
-    
-    //load identity
-    // but no need to do full init
-    if(YES != [framework initIdentity:NO])
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to init DND identity");
-        
-        //bail
-        goto bail;
-    }
-    
-    //delete id
-    if(YES != [framework.identity deleteIdentityWithDeleteAssociatedCA:YES])
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to delete DND identity");
-        
-        //bail
-        goto bail;
-    }
-    
-    //unset
-    framework.identity = nil;
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"deleted identity");
-    
-    //happy
-    uninstalled = YES;
-    
-bail:
 
-    return uninstalled;
+    return YES;
 }
 
 //init a handler for SIGTERM

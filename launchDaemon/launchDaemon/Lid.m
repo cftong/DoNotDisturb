@@ -18,7 +18,6 @@
 #import "XPCListener.h"
 #import "Preferences.h"
 #import "UserAuthMonitor.h"
-#import "FrameworkInterface.h"
 
 #import "XPCUserProto.h"
 
@@ -37,9 +36,6 @@ extern UserAuthMonitor* userAuthMonitor;
 
 //preferences obj
 extern Preferences* preferences;
-
-//DND framework interface obj
-extern FrameworkInterface* framework;
 
 //XPC listener
 extern XPCListener* xpcListener;
@@ -247,14 +243,9 @@ BOOL authViaTouchID()
 
 @implementation Lid
 
-@synthesize client;
 @synthesize userObserver;
-@synthesize dispatchGroup;
-@synthesize dispatchBlocks;
 @synthesize dismissObserver;
-@synthesize undeliveredAlert;
 @synthesize undeliveredAlerts;
-@synthesize dispatchGroupEmpty;
 
 //init
 -(id)init
@@ -280,16 +271,7 @@ BOOL authViaTouchID()
         
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"initial lid state: %d", lastLidState]);
-            
-        //init dispatch group for dismiss events
-        dispatchGroup = dispatch_group_create();
-        
-        //start empty
-        self.dispatchGroupEmpty = YES;
-        
-        //init array for blocks
-        dispatchBlocks = [NSMutableArray array];
-        
+
         //register listener for dismiss alerts
         // when it fires, invoke (user) XPC method to dismiss alert
         self.dismissObserver = [[NSNotificationCenter defaultCenter] addObserverForName:DISMISS_NOTIFICATION object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification)
@@ -335,69 +317,9 @@ BOOL authViaTouchID()
             }
             
         }];
-        
-        //should init client?
-        if(YES == [self shouldInitClient])
-        {
-            //init client
-            if(YES != [self clientInit])
-            {
-                //err msg
-                logMsg(LOG_ERR, @"failed to initialize DND client");
-            }
-            //dbg msg
-            else
-            {
-                //dbg msg
-                logMsg(LOG_DEBUG, @"initialized DND client for framework");
-            }
-        }
     }
-    
+
     return self;
-}
-
-//init client device, when:
-// a) there's an identity
-// b) there's a registered device
--(BOOL)shouldInitClient
-{
-    return ( (nil != framework.identity) &&
-             (0 != [[preferences get:PREF_REGISTERED_DEVICES][PREF_REGISTERED_DEVICES] count]) );
-}
-
-//init dnd client
--(BOOL)clientInit
-{
-    //flag
-    BOOL initialized = NO;
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"initializing DND client");
-    
-    //init client
-    client = [[DNDClientMac alloc] initWithDndIdentity:framework.identity sendCA:YES background:YES taskable:YES];
-    if(nil == self.client)
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to initialize client");
-        
-        //bail
-        goto bail;
-    }
-    
-    //set delegate
-    self.client.delegate = self;
-    
-    //indicate we want tasking
-    [self.client handleTasksWithFramework:[[preferences get:nil][PREF_NO_REMOTE_TASKING] boolValue] imageDelegate:self];
-    
-    //happy
-    initialized = YES;
-    
-bail:
-    
-    return initialized;
 }
 
 //register for notifications
@@ -628,291 +550,7 @@ bail:
             logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to execute %@", currentPrefs[PREF_EXECUTE_PATH]]);
         }
     }
-    
-    //before sending it to server
-    // check and init client if needed
-    if( (nil == self.client) &&
-        (YES == [self shouldInitClient]) )
-    {
-        //init client
-        if(YES != [self clientInit])
-        {
-            //err msg
-            logMsg(LOG_ERR, @"failed to initialize client for framework");
-            
-            //bail
-            goto bail;
-        }
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, @"(re)initialized DND client for framework");
-    }
-    
-    //registered device?
-    // send to alert to server
-    if(nil != self.client)
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"found registerd device/client, will try send alert to server");
-        
-        //no undelivered alert?
-        // spawn off dispatch to deliver
-        if(nil == self.undeliveredAlert)
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, @"no (prev) alerts undelivered");
-            
-            //save timestamp
-            self.undeliveredAlert = timestamp;
-            
-            //send to server
-            // will wait up to x minutes if there's no network connectivity
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                
-                //wait
-                [self send2Server:user];
-                
-            });
-        }
-        
-        //already send(ing) alert
-        // just update, so if network comes online, will use this one (as latest)
-        else
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, @"previously alert undelivered, just updating that...");
-            
-            //save timestamp
-            self.undeliveredAlert = timestamp;
-        }
-    }
-    
-    //didn't send
-    // ...as not registered w/ server
-    else
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"did not send to server - no client/registered device");
-    }
-    
-bail:
-    
-    return;
-}
 
-//send alert to server
-// contains extra logic to check/wait for network connectivty
--(void)send2Server:(NSString*)user
-{
-    //flag
-    BOOL sent = NO;
-    
-    //response
-    __block NSNumber* response = nil;
-    
-    //no user?
-    // set to default, but will try again
-    if(0 == user.length)
-    {
-        //default
-        user = USER_UNKNOWN;
-    }
-    
-    //try send up to 10 times
-    // basically gives time for network to reconnect if lid-shut disconnected wifi, etc...
-    for(NSUInteger i=0; i<10; i++)
-    {
-        //unknown user?
-        // try get user again
-        if(YES == [user isEqualToString:USER_UNKNOWN])
-        {
-            //get user
-            user = getConsoleUser();
-            if(0 == user.length)
-            {
-                //default
-                user = USER_UNKNOWN;
-            }
-        }
-        
-        //dbg msg
-        // and log to file
-        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"sending alert to server (user: %@)", user]);
-        
-        //send
-        response = [self.client sendAlertSyncWithUuid:[NSUUID UUID] userName:user date:self.undeliveredAlert photo:NO];
-        if(nil != response)
-        {
-            //log
-            logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"response from server: %@", response]);
-            
-            //after getting server response
-            // update list of registered devices
-            [preferences updateRegisteredDevices];
-            
-            //set flag
-            sent = YES;
-            
-            //wait for dismiss
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                
-                //wait
-                [self wait4Dismiss];
-                
-            });
-            
-            //done
-            break;
-        }
-        
-        //dbg msg
-        logMsg(LOG_DEBUG, @"could not reach endpoint - network offline?");
-        
-        //not online
-        //... so take a nap
-        [NSThread sleepForTimeInterval:i*1.5];
-    }
-    
-    //check
-    // log err
-    if(YES != sent)
-    {
-        //log
-        logMsg(LOG_DEBUG|LOG_TO_FILE, @"unable to deliver alert (network offline?)");
-    }
-    
-    //unset
-    // even if we failed to send
-    self.undeliveredAlert = nil;
-    
-    return;
-}
-
-//wait for dismiss
-// note: handles multiple client via dispatch group
--(void)wait4Dismiss
-{
-    //dispatch block
-    dispatch_block_t dispatchBlock = nil;
-    
-    //init dispatch block
-    dispatchBlock = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
-        
-        //debug msg
-        logMsg(LOG_DEBUG, @"dispatch block invoked, so leaving 'wait/dismiss' dispatch group");
-        
-        //done
-        // so leave!
-        dispatch_group_leave(self.dispatchGroup);
-        
-    });
-    
-    //sync
-    @synchronized(self)
-    {
-        //save it
-        [self.dispatchBlocks addObject:dispatchBlock];
-    }
-    
-    //enter dispatch group
-    dispatch_group_enter(self.dispatchGroup);
-    
-    //debug msg
-    logMsg(LOG_DEBUG, @"entered 'wait/dismiss' dispatch group");
-    
-    //sync
-    @synchronized(self)
-    {
-        //only start listening if nobody else is
-        if(YES == self.dispatchGroupEmpty)
-        {
-            //dbg msg
-            logMsg(LOG_DEBUG, @"dispatch group currently empty");
-            
-            //set flag
-            self.dispatchGroupEmpty = NO;
-            
-            //listen
-            [self.client listenOnDelegate:nil];
-            
-            //'register' notification code
-            // will be invoked when *everything* times out or is dismissed
-            dispatch_group_notify(self.dispatchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-                
-                //unset flag
-                self.dispatchGroupEmpty = YES;
-                
-                //disconnect client
-                [self.client disconnect];
-                
-                //unset client
-                self.client = nil;
-                
-                //dbg msg
-                logMsg(LOG_DEBUG, @"'wait/dismiss' dispatch group notified, disconnected/unset client");
-                
-            });
-        }
-        
-    }//sync
-    
-    //wait for 5 minutes
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (60 * 5) * NSEC_PER_SEC), dispatch_get_main_queue(),
-    ^{
-        //dbg msg
-        logMsg(LOG_DEBUG, @"dismiss timeout hit");
-        
-        //invoke dispatch block
-        dispatchBlock();
-        
-        //sync
-        @synchronized(self)
-        {
-            //remove it
-            [self.dispatchBlocks removeObject:dispatchBlock];
-            
-            //dbg msg
-            logMsg(LOG_DEBUG, @"removed dispatch block from array");
-        }
-        
-     });
-    
-    return;
-}
-
-//cancel and remove all dipatch blocks
--(void)cancelDispatchBlocks
-{
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"canceling %lu dispatch blocks", (unsigned long)self.dispatchBlocks.count]);
-    
-    //sync
-    @synchronized(self)
-    {
-        //cancel all
-        for(dispatch_block_t dispatchBlock in self.dispatchBlocks)
-        {
-            //cancel
-            dispatch_block_cancel(dispatchBlock);
-            
-            //leave
-            dispatch_group_leave(self.dispatchGroup);
-        }
-        
-        //now, remove all from saved list
-        [self.dispatchBlocks removeAllObjects];
-    }
-    
-    return;
-}
-
-//(framework) callback delegate
-// invoked when user dimisses event via phone
--(void)didGetDismissEvent:(Event *)event
-{
-    //broadcast event to everybody
-    [[NSNotificationCenter defaultCenter] postNotificationName:DISMISS_NOTIFICATION object:nil userInfo:nil];
-    
     return;
 }
 
@@ -943,43 +581,6 @@ bail:
 bail:
     
     return result;
-}
-
-//framework delegate method
-// send XPC message to user (login item) to take picture
--(void)captureImageWithCompletion:(void (^ _Nonnull)(NSData * _Nullable))completion
-{
-    //connected client? (login item)
-    // request image capture of camera, via XPC
-    if(nil != xpcListener.loginItem)
-    {
-        //request to user (login item) to take a picture
-        [[xpcListener.loginItem remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
-          {
-              //err msg
-              logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to invoke USER XPC method: 'capture picture' (error: %@)", proxyError]);
-              
-              //error
-              completion(nil);
-              
-          }] captureImage:^(NSData* image)
-         {
-             //pass back to framework
-             completion(image);
-         }];
-    }
-    else
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"no client (login item) is connected, so can't capture image");
-        
-        //still, invoke callback
-        completion(nil);
-    }
-    
-    
-    
-    return;
 }
 
 @end

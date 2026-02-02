@@ -173,7 +173,7 @@ bail:
         self.touchBar.delegate = self;
         
         //set id
-        self.touchBar.customizationIdentifier = @"com.objective-see.dnd";
+        self.touchBar.customizationIdentifier = @"ca.tarapore.dnd";
         
         //init items
         touchBarItems = @[@".icon", @".label", @".button"];

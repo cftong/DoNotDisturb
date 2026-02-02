@@ -234,22 +234,28 @@
 {
     //status var
     BOOL status = NO;
-    
+
+    //configure obj
+    __block Configure* configureObj = nil;
+
     //begin event
     // updates ui on main thread
     dispatch_sync(dispatch_get_main_queue(),
     ^{
         //complete
         [self beginEvent:event];
+
+        //grab configure obj on main thread
+        configureObj = ((AppDelegate*)[[NSApplication sharedApplication] delegate]).configureObj;
     });
-    
+
     //sleep
     // allow 'install' || 'uninstall' msg to show up
     [NSThread sleepForTimeInterval:0.5];
-  
+
     //perform action (install | uninstall)
     // perform background actions
-    if(YES == [((AppDelegate*)[[NSApplication sharedApplication] delegate]).configureObj configure:event])
+    if(YES == [configureObj configure:event])
     {
         //set flag
         status = YES;

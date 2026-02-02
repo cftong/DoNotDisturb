@@ -8,23 +8,14 @@
 //
 
 @import Foundation;
-#import <dnd/dnd-Swift.h>
 
 #import "XPCDaemonProto.h"
 
 
-@interface XPCDaemon : NSObject <XPCDaemonProtocol, DNDClientMacDelegate>
+@interface XPCDaemon : NSObject <XPCDaemonProtocol>
 {
-    
+
 }
-
-/* PROPERTIES */
-
-//registration info from server
-@property(nonatomic,retain)NSDictionary *registrationInfo;
-
-//registration wait semaphore
-@property dispatch_semaphore_t registrationSema;
 
 /* METHODS */
 

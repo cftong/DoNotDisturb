@@ -26,7 +26,6 @@
 		CD3307E820376CCB00F10D71 /* dndIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3307E720376CCB00F10D71 /* dndIcon.png */; };
 		CD981A8D2069049B001B875B /* statusIconDisabled.png in Resources */ = {isa = PBXBuildFile; fileRef = CD981A8B2069049A001B875B /* statusIconDisabled.png */; };
 		CD981A8E2069049B001B875B /* statusIconDisabled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD981A8C2069049A001B875B /* statusIconDisabled@2x.png */; };
-		CDD8075D2134E0930046594E /* Sentry.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = CDD8075C2134E0930046594E /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDFA0888213685370089758C /* XPCUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA0887213685370089758C /* XPCUser.m */; };
 		CDFA08AA213B3ECA0089758C /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFA08A9213B3ECA0089758C /* Camera.m */; };
 		CDFB7888206E2F3400ABDD04 /* statusIconWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFB7884206E2F3400ABDD04 /* statusIconWhite.png */; };
@@ -44,7 +43,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CDD8075D2134E0930046594E /* Sentry.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -84,7 +82,6 @@
 		CD3307E720376CCB00F10D71 /* dndIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = dndIcon.png; path = ../shared/images/dndIcon.png; sourceTree = "<group>"; };
 		CD981A8B2069049A001B875B /* statusIconDisabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = statusIconDisabled.png; sourceTree = "<group>"; };
 		CD981A8C2069049A001B875B /* statusIconDisabled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "statusIconDisabled@2x.png"; sourceTree = "<group>"; };
-		CDD8075C2134E0930046594E /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
 		CDFA088121367C690089758C /* XPC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = XPC.h; path = ../shared/XPC.h; sourceTree = "<group>"; };
 		CDFA088221367F980089758C /* XPCUserProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCUserProto.h; path = ../shared/XPCUserProto.h; sourceTree = "<group>"; };
 		CDFA088321367F980089758C /* XPCDaemonProto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonProto.h; path = ../shared/XPCDaemonProto.h; sourceTree = "<group>"; };
@@ -213,7 +210,6 @@
 		CD20A0D520579AE50044BCC5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CDD8075C2134E0930046594E /* Sentry.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -249,7 +245,7 @@
 				TargetAttributes = {
 					7D7755E21F02E05B00D0017D = {
 						CreatedOnToolsVersion = 8.2.1;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.Mac = {
 								enabled = 0;
@@ -263,6 +259,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -450,18 +447,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "loginItem/loginItem.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = VBG97UB4TA;
+				DEVELOPMENT_TEAM = 7KGHU7S762;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				INFOPLIST_FILE = loginItem/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../../../../../Frameworks";
 				OTHER_CFLAGS = "-DXPC_USER=1";
 				OTHER_CODE_SIGN_FLAGS = "-o hard,kill,library";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.dnd.helper";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd.helper;
 				PRODUCT_NAME = "Do Not Disturb Helper";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -472,11 +470,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "loginItem/loginItem.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = VBG97UB4TA;
+				DEVELOPMENT_TEAM = 7KGHU7S762;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				INFOPLIST_FILE = loginItem/Info.plist;
@@ -484,7 +483,7 @@
 				OTHER_CFLAGS = "-DXPC_USER=1";
 				OTHER_CODE_SIGN_FLAGS = "-o hard,kill,library";
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.dnd.helper";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd.helper;
 				PRODUCT_NAME = "Do Not Disturb Helper";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;

@@ -11,15 +11,11 @@
 #import "consts.h"
 #import "logging.h"
 #import "Preferences.h"
-#import "FrameworkInterface.h"
 
 /* GLOBALS */
 
 //lid obj
 extern Lid* lid;
-
-//DND framework interface obj
-extern FrameworkInterface* framework;
 
 @implementation Preferences
 
@@ -106,16 +102,6 @@ bail:
     //grab just the one user requested
     else
     {
-        //registered devices?
-        // first get most recent list from server
-        // but only if there is at least one (local) device...
-        if( (YES == [preference isEqualToString:PREF_REGISTERED_DEVICES]) &&
-            (0 != [self.preferences[PREF_REGISTERED_DEVICES] count]) )
-        {
-            //get most recent list
-            [self updateRegisteredDevices];
-        }
-        
         //now grab requested pref
         if(nil != self.preferences[preference])
         {
@@ -175,18 +161,11 @@ bail:
             
             //unregister for lid notifications
             [lid unregister4Notifications];
-            
+
             //dbg msg
             logMsg(LOG_DEBUG, @"unregistered for lid change notifications");
-            
-            //cancel all lid notifications
-            // ...will also disconnect client
-            [lid cancelDispatchBlocks];
-            
-            //dbg msg
-            logMsg(LOG_DEBUG, @"cancelled all dispatch blocks (disconnecting any connected iOS client)");
-            
-            //finally broadcast dimiss to dismiss any alerts
+
+            //broadcast dismiss to dismiss any alerts
             [[NSNotificationCenter defaultCenter] postNotificationName:DISMISS_NOTIFICATION object:nil userInfo:nil];
         }
         
@@ -244,108 +223,6 @@ bail:
 bail:
     
     return updated;
-}
-
-//ping server for registered devices
-// then update preferences with this list...
--(void)updateRegisteredDevices
-{
-    //client
-    DNDClientMac *client;
-    
-    //shadow
-    MacShadow* macShadow = nil;
-    
-    //registered devices
-    NSMutableDictionary* devices = nil;
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"updating registered devices");
-    
-    //alloc dictionary
-    devices = [NSMutableDictionary dictionary];
-    
-    //aren't any registered devices?
-    // just bail
-    if(0 == [self.preferences[PREF_REGISTERED_DEVICES] count])
-    {
-        //bail
-        goto bail;
-    }
-    
-    //sanity check
-    // only happens w/ 0 registered devices
-    // and since devices have to be registered via computer, server won't have more...
-    if(nil == framework.identity)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //init client
-    client = [[DNDClientMac alloc] initWithDndIdentity:framework.identity sendCA:YES background:YES taskable:NO];
-    if(nil == client)
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to initialize client");
-        
-        //bail
-        goto bail;
-    }
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, @"asking server for list of registered endpoints...");
-    
-    //get shadow
-    macShadow = [client getShadowSync];
-    if(nil == macShadow)
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to get mac shadow sync");
-        
-        //bail
-        goto bail;
-    }
-    
-    //sync prefs
-    @synchronized(self.preferences)
-    {
-    
-    //get list of registered devices from server
-    // build (updated) list of devices id : device name mappings
-    for(NSString* deviceID in macShadow.state.reported.endpoints)
-    {
-        //sanity check
-        if(nil == self.preferences[PREF_REGISTERED_DEVICES][deviceID])
-        {
-            //skip
-            continue;
-        }
-        
-        //add current device name
-        devices[deviceID] = self.preferences[PREF_REGISTERED_DEVICES][deviceID];
-    }
-        
-    }//sync
-    
-    //no registered devices?
-    // remove key from preferences
-    if(0 == devices.count)
-    {
-        //unset
-        [self set:PREF_REGISTERED_DEVICES value:nil];
-    }
-    //otherwise
-    // update preferences with (current) registered devices
-    else
-    {
-        //update
-        [self set:PREF_REGISTERED_DEVICES value:devices];
-    }
-    
-bail:
-    
-    return;
 }
 
 //save to disk

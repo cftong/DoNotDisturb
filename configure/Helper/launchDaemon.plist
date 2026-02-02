@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>com.objective-see.dnd.installer.helper</string>
+	<string>ca.tarapore.dnd.installer.helper</string>
 	<key>MachServices</key>
 	<dict>
-		<key>com.objective-see.dnd.installer.helper</key>
+		<key>ca.tarapore.dnd.installer.helper</key>
 		<true/>
 	</dict>
 	<key>EnableTransactions</key>

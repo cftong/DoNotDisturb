@@ -30,8 +30,4 @@
 // saves and handles logic for specific prefs
 -(BOOL)update:(NSDictionary*)updates;
 
-//ping server for registered devices
-// then update preferences with this list...
--(void)updateRegisteredDevices;
-
 @end

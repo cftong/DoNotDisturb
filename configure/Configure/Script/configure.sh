@@ -21,12 +21,12 @@ if [ "${1}" == "-install" ]; then
 
     #set permissions
     chown -R root:wheel "Do Not Disturb.bundle"
-    chown -R root:wheel "com.objective-see.dnd.plist"
+    chown -R root:wheel "ca.tarapore.dnd.plist"
 
     #install & load launch daemon
     mv "Do Not Disturb.bundle" $INSTALL_DIRECTORY
-    mv "com.objective-see.dnd.plist" /Library/LaunchDaemons/
-    launchctl load "/Library/LaunchDaemons/com.objective-see.dnd.plist"
+    mv "ca.tarapore.dnd.plist" /Library/LaunchDaemons/
+    launchctl load "/Library/LaunchDaemons/ca.tarapore.dnd.plist"
 
     #give launch daemon a second
     # time to initialize, get XPC interface up, etc...
@@ -62,8 +62,8 @@ elif [ "${1}" == "-uninstall" ]; then
     fi
 
     #unload launch daemon & remove plist
-    launchctl unload /Library/LaunchDaemons/com.objective-see.dnd.plist
-    rm /Library/LaunchDaemons/com.objective-see.dnd.plist
+    launchctl unload /Library/LaunchDaemons/ca.tarapore.dnd.plist
+    rm /Library/LaunchDaemons/ca.tarapore.dnd.plist
 
     echo "unloaded launch daemon"
 
@@ -91,7 +91,7 @@ elif [ "${1}" == "-uninstall" ]; then
 
     #kill
     killall "Do Not Disturb" 2> /dev/null
-    killall "com.objective-see.dnd.helper" 2> /dev/null
+    killall "ca.tarapore.dnd.helper" 2> /dev/null
     killall "Do Not Disturb Helper" 2> /dev/null
 
     echo "uninstall complete"

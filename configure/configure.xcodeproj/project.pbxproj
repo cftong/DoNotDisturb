@@ -11,7 +11,7 @@
 		4BE4906110445E13006BE471 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE4905510445DDD006BE471 /* Helper.m */; };
 		4BE4906410445F2F006BE471 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE4906310445F2F006BE471 /* Security.framework */; };
 		4BE4906810445F36006BE471 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE4906710445F36006BE471 /* ServiceManagement.framework */; };
-		4BE49092104463A0006BE471 /* com.objective-see.dnd.installer.helper in Copy Helper */ = {isa = PBXBuildFile; fileRef = 4BE4905D10445E0A006BE471 /* com.objective-see.dnd.installer.helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4BE49092104463A0006BE471 /* ca.tarapore.dnd.installer.helper in Copy Helper */ = {isa = PBXBuildFile; fileRef = 4BE4905D10445E0A006BE471 /* ca.tarapore.dnd.installer.helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BF04235611C0531400431286 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF04235511C0531400431286 /* AppDelegate.m */; };
 		BF65C19111B985C0007C20AB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF65C19011B985C0007C20AB /* MainMenu.xib */; };
@@ -22,9 +22,7 @@
 		CD17D55120104EE700F798D7 /* ConfigureWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD17D54920104EE700F798D7 /* ConfigureWindowController.xib */; };
 		CD17D55320104EE700F798D7 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54B20104EE700F798D7 /* AboutWindowController.m */; };
 		CD17D55E201148F900F798D7 /* configure.sh in Resources */ = {isa = PBXBuildFile; fileRef = CD17D55D201148F900F798D7 /* configure.sh */; };
-		CD17D56320116C3800F798D7 /* com.objective-see.dnd.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD17D56220116C3800F798D7 /* com.objective-see.dnd.plist */; };
-		CD20A0D02057992F0044BCC5 /* Sentry.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD20A0CF2057992F0044BCC5 /* Sentry.framework */; };
-		CD20A0D320579A380044BCC5 /* Sentry.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = CD20A0CF2057992F0044BCC5 /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD17D56320116C3800F798D7 /* ca.tarapore.dnd.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */; };
 		CD2F4082204B462E0066673E /* dndText.png in Resources */ = {isa = PBXBuildFile; fileRef = CDAAC24A20226DFB0032F2E6 /* dndText.png */; };
 		CD3307AE203567D500F10D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD3307AD203567D400F10D71 /* Assets.xcassets */; };
 		CD73DA912004629D001FFC84 /* HelperInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA902004629D001FFC84 /* HelperInterface.m */; };
@@ -59,7 +57,7 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				4BE49092104463A0006BE471 /* com.objective-see.dnd.installer.helper in Copy Helper */,
+				4BE49092104463A0006BE471 /* ca.tarapore.dnd.installer.helper in Copy Helper */,
 			);
 			name = "Copy Helper";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -70,7 +68,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CD20A0D320579A380044BCC5 /* Sentry.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,7 +91,7 @@
 		4BE4905310445DDD006BE471 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE4905410445DDD006BE471 /* launchDaemon.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = launchDaemon.plist; sourceTree = "<group>"; };
 		4BE4905510445DDD006BE471 /* Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helper.m; sourceTree = "<group>"; };
-		4BE4905D10445E0A006BE471 /* com.objective-see.dnd.installer.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "com.objective-see.dnd.installer.helper"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BE4905D10445E0A006BE471 /* ca.tarapore.dnd.installer.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ca.tarapore.dnd.installer.helper"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE4906310445F2F006BE471 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		4BE4906710445F36006BE471 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		8D1107320486CEB800E47090 /* Do Not Disturb Installer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Do Not Disturb Installer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,9 +110,8 @@
 		CD17D54920104EE700F798D7 /* ConfigureWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfigureWindowController.xib; sourceTree = "<group>"; };
 		CD17D54B20104EE700F798D7 /* AboutWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutWindowController.m; sourceTree = "<group>"; };
 		CD17D55D201148F900F798D7 /* configure.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = configure.sh; sourceTree = "<group>"; };
-		CD17D56220116C3800F798D7 /* com.objective-see.dnd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "com.objective-see.dnd.plist"; path = "../launchDaemon/launchDaemon/com.objective-see.dnd.plist"; sourceTree = "<group>"; };
+		CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "ca.tarapore.dnd.plist"; path = "../launchDaemon/launchDaemon/ca.tarapore.dnd.plist"; sourceTree = "<group>"; };
 		CD18D64C200DA301005609F9 /* XPCProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCProtocol.h; path = Shared/XPCProtocol.h; sourceTree = SOURCE_ROOT; };
-		CD20A0CF2057992F0044BCC5 /* Sentry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sentry.framework; path = ../Carthage/Build/Mac/Sentry.framework; sourceTree = "<group>"; };
 		CD3307AD203567D400F10D71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD73DA8F2004629D001FFC84 /* HelperInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperInterface.h; sourceTree = "<group>"; };
 		CD73DA902004629D001FFC84 /* HelperInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelperInterface.m; sourceTree = "<group>"; };
@@ -146,7 +142,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				CD20A0D02057992F0044BCC5 /* Sentry.framework in Frameworks */,
 				4BE4906410445F2F006BE471 /* Security.framework in Frameworks */,
 				4BE4906810445F36006BE471 /* ServiceManagement.framework in Frameworks */,
 			);
@@ -159,7 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* Do Not Disturb Installer.app */,
-				4BE4905D10445E0A006BE471 /* com.objective-see.dnd.installer.helper */,
+				4BE4905D10445E0A006BE471 /* ca.tarapore.dnd.installer.helper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,7 +176,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CD20A0CF2057992F0044BCC5 /* Sentry.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				4BE4906310445F2F006BE471 /* Security.framework */,
 				4BE4906710445F36006BE471 /* ServiceManagement.framework */,
@@ -239,7 +233,7 @@
 		CD17D56120116C2000F798D7 /* SupportingFiles */ = {
 			isa = PBXGroup;
 			children = (
-				CD17D56220116C3800F798D7 /* com.objective-see.dnd.plist */,
+				CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */,
 			);
 			name = SupportingFiles;
 			sourceTree = "<group>";
@@ -295,7 +289,7 @@
 			);
 			name = helper;
 			productName = SMJobBlessHelper;
-			productReference = 4BE4905D10445E0A006BE471 /* com.objective-see.dnd.installer.helper */;
+			productReference = 4BE4905D10445E0A006BE471 /* ca.tarapore.dnd.installer.helper */;
 			productType = "com.apple.product-type.tool";
 		};
 		8D1107260486CEB800E47090 /* configure */ = {
@@ -329,12 +323,12 @@
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
 					4BE4905C10445E0A006BE471 = {
-						DevelopmentTeam = VBG97UB4TA;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 7KGHU7S762;
+						ProvisioningStyle = Automatic;
 					};
 					8D1107260486CEB800E47090 = {
-						DevelopmentTeam = VBG97UB4TA;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 7KGHU7S762;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -343,6 +337,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* SMJobBless */;
@@ -362,7 +357,7 @@
 			files = (
 				CD2F4082204B462E0066673E /* dndText.png in Resources */,
 				CDAAC24C20226DFB0032F2E6 /* logo.png in Resources */,
-				CD17D56320116C3800F798D7 /* com.objective-see.dnd.plist in Resources */,
+				CD17D56320116C3800F798D7 /* ca.tarapore.dnd.plist in Resources */,
 				CDAAC24B20226DFB0032F2E6 /* objectiveSee.png in Resources */,
 				BF65C19111B985C0007C20AB /* MainMenu.xib in Resources */,
 				CD17D55E201148F900F798D7 /* configure.sh in Resources */,
@@ -439,9 +434,10 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = VBG97UB4TA;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7KGHU7S762;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				INFOPLIST_FILE = Helper/Info.plist;
@@ -455,11 +451,10 @@
 					__launchd_plist,
 					Helper/launchDaemon.plist,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.dnd.installer.helper";
-				PRODUCT_NAME = "com.objective-see.dnd.installer.helper";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.tarapore.dnd.installer.helper";
+				PRODUCT_NAME = "ca.tarapore.dnd.installer.helper";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -468,9 +463,10 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = VBG97UB4TA;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7KGHU7S762;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				INFOPLIST_FILE = Helper/Info.plist;
@@ -484,11 +480,10 @@
 					__launchd_plist,
 					Helper/launchDaemon.plist,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.dnd.installer.helper";
-				PRODUCT_NAME = "com.objective-see.dnd.installer.helper";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.tarapore.dnd.installer.helper";
+				PRODUCT_NAME = "ca.tarapore.dnd.installer.helper";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
@@ -498,20 +493,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = VBG97UB4TA;
+				DEVELOPMENT_TEAM = 7KGHU7S762;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				INFOPLIST_FILE = configure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.dnd.installer";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd.installer;
 				PRODUCT_NAME = "Do Not Disturb Installer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
-				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -521,20 +516,20 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = VBG97UB4TA;
+				DEVELOPMENT_TEAM = 7KGHU7S762;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				INFOPLIST_FILE = configure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.objective-see.dnd.installer";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd.installer;
 				PRODUCT_NAME = "Do Not Disturb Installer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
-				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};

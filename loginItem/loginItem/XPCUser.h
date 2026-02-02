@@ -8,7 +8,6 @@
 //
 
 @import Foundation;
-#import <dnd/dnd-Swift.h>
 
 #import "XPCUserProto.h"
 

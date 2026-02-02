@@ -7,8 +7,6 @@
 //  copyright (c) 2018 Objective-See. All rights reserved.
 //
 
-@import Sentry;
-
 #import "Consts.h"
 #import "Logging.h"
 #import "Configure.h"
@@ -33,12 +31,6 @@
 -(void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     #pragma unused(notification)
-    
-    //init crash reporting client
-    SentryClient.sharedClient = [[SentryClient alloc] initWithDsn:CRASH_REPORTING_URL didFailWithError:nil];
-    
-    //start crash handler
-    [SentryClient.sharedClient startCrashHandlerWithError:nil];
     
     //make sure system is supported (lid)
     // if not, will inform user via alert

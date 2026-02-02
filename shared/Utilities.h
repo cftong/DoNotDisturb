@@ -10,7 +10,6 @@
 #ifndef Utilities_h
 #define Utilities_h
 
-@import Sentry;
 @import AVFoundation;
 
 #import <AppKit/AppKit.h>
@@ -28,13 +27,6 @@ typedef NS_ENUM(int, LidState)
 };
 
 /* FUNCTIONS */
-
-//init crash reporting
-void initCrashReporting(void);
-
-//loads a framework
-// note: assumes it is in 'Framework' dir
-NSBundle* loadFramework(NSString* name);
 
 //get app's version
 // extracted from Info.plist

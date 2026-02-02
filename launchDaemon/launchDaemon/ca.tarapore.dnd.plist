@@ -4,11 +4,11 @@
 <dict>
 	<key>MachServices</key>
 	<dict>
-		<key>com.objective-see.dndDaemon</key>
+		<key>ca.tarapore.dndDaemon</key>
 		<true/>
 	</dict>
 	<key>Label</key>
-	<string>com.objective-see.dnd</string>
+	<string>ca.tarapore.dnd</string>
 	<key>ProgramArguments</key>
 	<array>
 		<string>/Library/Objective-See/DND/Do Not Disturb.bundle/Contents/MacOS/Do Not Disturb</string>

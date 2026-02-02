@@ -23,101 +23,6 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-//init crash reporting
-void initCrashReporting()
-{
-    //sentry
-    NSBundle *sentry = nil;
-    
-    //error
-    NSError* error = nil;
-    
-    //class
-    Class SentryClient = nil;
-    
-    //load senty
-    sentry = loadFramework(@"Sentry.framework");
-    if(nil == sentry)
-    {
-        //err msg
-        logMsg(LOG_ERR, @"failed to load 'Sentry' framework");
-        
-        //bail
-        goto bail;
-    }
-    
-    //get client class
-    SentryClient = NSClassFromString(@"SentryClient");
-    if(nil == SentryClient)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //set shared client
-    [SentryClient setSharedClient:[[SentryClient alloc] initWithDsn:CRASH_REPORTING_URL didFailWithError:&error]];
-    if(nil != error)
-    {
-        //log error
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"initializing 'Sentry' failed with %@", error]);
-        
-        //bail
-        goto bail;
-    }
-    
-    //start crash handler
-    [[SentryClient sharedClient] startCrashHandlerWithError:&error];
-    if(nil != error)
-    {
-        //log error
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"starting 'Sentry' crash handler failed with %@", error]);
-        
-        //bail
-        goto bail;
-    }
-    
-bail:
-    
-    return;
-}
-
-
-//loads a framework
-// note: assumes it is in 'Framework' dir
-NSBundle* loadFramework(NSString* name)
-{
-    //handle
-    NSBundle* framework = nil;
-    
-    //framework path
-    NSString* path = nil;
-    
-    //init path
-    path = [NSString stringWithFormat:@"%@/../Frameworks/%@", [NSProcessInfo.processInfo.arguments[0] stringByDeletingLastPathComponent], name];
-    
-    //standardize path
-    path = [path stringByStandardizingPath];
-    
-    //init framework (bundle)
-    framework = [NSBundle bundleWithPath:path];
-    if(NULL == framework)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //load framework
-    if(YES != [framework loadAndReturnError:nil])
-    {
-        //bail
-        goto bail;
-    }
-    
-bail:
-    
-    return framework;
-}
-
 //get app's version
 // extracted from Info.plist
 NSString* getAppVersion()
@@ -181,7 +86,7 @@ OSStatus verifyApp(NSString* path, NSString* signingAuth)
     SecRequirementRef requirementRef = NULL;
     
     //init requirement string
-    requirementString = [NSString stringWithFormat:@"anchor trusted and certificate leaf [subject.CN] = \"%@\"", signingAuth];
+    requirementString = [NSString stringWithFormat:@"anchor apple generic and certificate leaf[subject.OU] = \"%@\"", signingAuth];
     
     //create static code
     status = SecStaticCodeCreateWithPath((__bridge CFURLRef)([NSURL fileURLWithPath:path]), kSecCSDefaultFlags, &staticCode);
