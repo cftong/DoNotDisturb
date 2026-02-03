@@ -235,6 +235,9 @@
 //command line uninstall
 #define CMDLINE_FLAG_UNINSTALL @"-uninstall"
 
+//events flag (open to events tab)
+#define CMDLINE_FLAG_EVENTS @"-events"
+
 //signature status
 #define KEY_SIGNATURE_STATUS @"signatureStatus"
 

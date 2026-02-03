@@ -42,13 +42,20 @@
     {
         //show preferences window
         [self showPreferences:nil];
-        
+
         //center
         [self.prefsWindowController.window center];
-        
+
         //key and front
         [self.prefsWindowController.window makeKeyAndOrderFront:self];
-        
+
+        //events flag?
+        // switch to events tab
+        if(YES == [[[NSProcessInfo processInfo] arguments] containsObject:CMDLINE_FLAG_EVENTS])
+        {
+            [self.prefsWindowController showEventsTab];
+        }
+
         //start login item in background
         // method checks first to make sure only one instance is running
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),

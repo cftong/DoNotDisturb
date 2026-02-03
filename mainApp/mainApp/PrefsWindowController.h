@@ -29,6 +29,9 @@
 //tool bar id for 'general'
 #define TOOLBAR_GENERAL_ID @"general"
 
+//tool bar id for 'events'
+#define TOOLBAR_EVENTS_ID @"events"
+
 //passive mode button
 #define BUTTON_PASSIVE_MODE 1
 
@@ -128,5 +131,8 @@
 
 //button handler for all preference buttons
 -(IBAction)togglePreference:(id)sender;
+
+//show events tab
+-(void)showEventsTab;
 
 @end

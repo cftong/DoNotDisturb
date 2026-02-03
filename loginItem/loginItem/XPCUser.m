@@ -118,4 +118,28 @@
     return YES;
 }
 
+//'NSUserNotificationCenterDelegate' delegate method
+// handle notification click - open main app to events tab
+-(void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+    //path to main app
+    NSString* mainAppPath = nil;
+
+    //get path to main app (parent of login item)
+    // loginItem is at: MainApp.app/Contents/Library/LoginItems/LoginItem.app
+    mainAppPath = [[[[[[NSBundle mainBundle] bundlePath]
+                      stringByDeletingLastPathComponent]  // LoginItems/
+                     stringByDeletingLastPathComponent]   // Library/
+                    stringByDeletingLastPathComponent]    // Contents/
+                   stringByDeletingLastPathComponent];    // MainApp.app
+
+    //open main app with -events flag
+    NSWorkspaceOpenConfiguration* config = [NSWorkspaceOpenConfiguration configuration];
+    config.arguments = @[@"-events"];
+
+    [[NSWorkspace sharedWorkspace] openApplicationAtURL:[NSURL fileURLWithPath:mainAppPath]
+                                          configuration:config
+                                      completionHandler:nil];
+}
+
 @end

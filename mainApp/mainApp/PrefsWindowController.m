@@ -72,6 +72,23 @@ static const void* kFilePathKey = &kFilePathKey;
     return [toolbarItem isEnabled] ;
 }
 
+//show events tab programmatically
+-(void)showEventsTab
+{
+    //select events in toolbar
+    [self.toolbar setSelectedItemIdentifier:TOOLBAR_EVENTS_ID];
+
+    //find and invoke the events toolbar item
+    for(NSToolbarItem* item in self.toolbar.items)
+    {
+        if([item.itemIdentifier isEqualToString:TOOLBAR_EVENTS_ID])
+        {
+            [self toolbarButtonHandler:item];
+            break;
+        }
+    }
+}
+
 //toolbar view handler
 // toggle view based on user selection
 -(IBAction)toolbarButtonHandler:(id)sender
