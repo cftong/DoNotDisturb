@@ -23,6 +23,9 @@ void usbDeviceAppeared(void *refCon, io_iterator_t iterator);
 //run loop source
 @property(nonatomic)CFRunLoopSourceRef runLoopSource;
 
+//handler block invoked when a new USB device is inserted
+@property (copy) void (^deviceInsertedHandler)(NSString* deviceName);
+
 
 /* METHODS */
 

@@ -187,6 +187,26 @@
 // no remote tasking
 #define PREF_NO_REMOTE_TASKING @"noRemoteTasking"
 
+//pref
+// photo capture action
+#define PREF_PHOTO_ACTION @"photoAction"
+
+//pref
+// email notification action
+#define PREF_EMAIL_ACTION @"emailAction"
+
+//pref
+// email address for notifications
+#define PREF_EMAIL_ADDRESS @"emailAddress"
+
+//pref
+// USB monitoring
+#define PREF_USB_MONITOR @"usbMonitor"
+
+//pref
+// screen locked (transient, not persisted)
+#define PREF_SCREEN_LOCKED @"screenLocked"
+
 //prefs
 // update mode
 #define PREF_NO_UPDATES_MODE @"noUpdatesMode"

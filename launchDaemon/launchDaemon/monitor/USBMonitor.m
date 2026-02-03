@@ -15,6 +15,7 @@
 
 @synthesize runLoopSource;
 @synthesize notificationPort;
+@synthesize deviceInsertedHandler;
 
 //callback for USB devices
 void usbDeviceAppeared(void *refCon, io_iterator_t iterator)
@@ -124,15 +125,34 @@ bail:
     //process
     while((device = IOIteratorNext(iterator)))
     {
+        //device name
+        io_name_t deviceNameBuf = {0};
+
+        //device name string
+        NSString* deviceNameStr = nil;
+
         //log msg
         logMsg(LOG_TO_FILE, [NSString stringWithFormat:@"monitor event: usb device inserted"]);
-        
+
+        //get device name
+        if(KERN_SUCCESS == IORegistryEntryGetName(device, deviceNameBuf))
+        {
+            //convert to NSString
+            deviceNameStr = [NSString stringWithUTF8String:deviceNameBuf];
+        }
+
         //record device name/properties
         [self logDeviceProperties:device];
-        
+
+        //invoke handler if set
+        if(nil != self.deviceInsertedHandler)
+        {
+            self.deviceInsertedHandler(deviceNameStr ?: @"unknown");
+        }
+
         //release device
         IOObjectRelease(device);
-        
+
         //unset
         device = 0;
     }

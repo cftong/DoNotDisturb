@@ -8,8 +8,8 @@
 //
 
 #import "Lid.h"
-#import "consts.h"
-#import "logging.h"
+#import "Consts.h"
+#import "Logging.h"
 #import "Preferences.h"
 
 /* GLOBALS */
@@ -184,10 +184,45 @@ bail:
         }
     }
     
+    //handle screen lock state (transient, not persisted)
+    if(nil != updates[PREF_SCREEN_LOCKED])
+    {
+        //screen locked?
+        if(YES == [updates[PREF_SCREEN_LOCKED] boolValue])
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"screen locked, checking if USB monitoring should start");
+
+            //start USB monitor if pref is enabled
+            [lid startUSBMonitor];
+        }
+        //screen unlocked
+        else
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"screen unlocked, stopping USB monitoring");
+
+            //stop USB monitor
+            [lid stopUSBMonitor];
+        }
+
+        //strip transient key before persisting
+        NSMutableDictionary* mutableUpdates = [updates mutableCopy];
+        [mutableUpdates removeObjectForKey:PREF_SCREEN_LOCKED];
+        updates = mutableUpdates;
+
+        //if nothing left to persist, we're done
+        if(0 == updates.count)
+        {
+            updated = YES;
+            goto bail;
+        }
+    }
+
     //sync prefs
     @synchronized(self.preferences)
     {
-    
+
     //updating list of registered devices?
     // it's a dictionary so requires an extra merge
     if( (nil != updates[PREF_REGISTERED_DEVICES]) &&
@@ -196,7 +231,7 @@ bail:
         //merge
         [self.preferences[PREF_REGISTERED_DEVICES] addEntriesFromDictionary:updates[PREF_REGISTERED_DEVICES]];
     }
-    
+
     //for all other prefs or for 1st device
     // just merge in new prefs into existing ones
     else
@@ -204,7 +239,7 @@ bail:
         //merge
         [self.preferences addEntriesFromDictionary:updates];
     }
-        
+
     }//sync
     
     //save

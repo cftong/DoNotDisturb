@@ -137,7 +137,7 @@ static void pmDomainChange(void *refcon, io_service_t service, uint32_t messageT
         
         //process event
         // report to user, execute actions, etc
-        [lid processEvent:timestamp user:getConsoleUser()];
+        [lid processEvent:timestamp user:getConsoleUser() eventType:@"lid"];
     }
     
     //(new) close?
@@ -246,6 +246,7 @@ BOOL authViaTouchID()
 @synthesize userObserver;
 @synthesize dismissObserver;
 @synthesize undeliveredAlerts;
+@synthesize persistentUSBMonitor;
 
 //init
 -(id)init
@@ -457,9 +458,9 @@ bail:
     return;
 }
 
-//proces lid open event
+//process event (lid open or USB insertion)
 // report to user, execute cmd, send alert to server, etc
--(void)processEvent:(NSDate*)timestamp user:(NSString*)user
+-(void)processEvent:(NSDate*)timestamp user:(NSString*)user eventType:(NSString*)eventType
 {
     //monitor obj
     Monitor* monitor = nil;
@@ -542,7 +543,7 @@ bail:
     {
         //dbg msg
         logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"executing: %@ as %@", currentPrefs[PREF_EXECUTE_PATH], currentPrefs[PREF_EXECUTE_USER]]);
-        
+
         //exec payload
         if(0 != [self executeAction:currentPrefs[PREF_EXECUTE_PATH] user:currentPrefs[PREF_EXECUTE_USER]])
         {
@@ -550,6 +551,218 @@ bail:
             logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to execute %@", currentPrefs[PREF_EXECUTE_PATH]]);
         }
     }
+
+    //capture photo?
+    if(YES == [currentPrefs[PREF_PHOTO_ACTION] boolValue])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG|LOG_TO_FILE, @"photo capture action enabled, requesting image from login item");
+
+        //connected login item?
+        if(nil != xpcListener.loginItem)
+        {
+            //request image via XPC
+            [[xpcListener.loginItem remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+            {
+                //err msg
+                logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to invoke USER XPC method: 'captureImage' (error: %@)", proxyError]);
+
+            }] captureImage:^(NSData* imageData)
+            {
+                //photos directory
+                NSString* photosDir = nil;
+
+                //photo path
+                NSString* photoPath = nil;
+
+                //date formatter
+                NSDateFormatter* formatter = nil;
+
+                //error
+                NSError* error = nil;
+
+                //sanity check
+                if(nil == imageData || 0 == imageData.length)
+                {
+                    //err msg
+                    logMsg(LOG_ERR|LOG_TO_FILE, @"failed to capture image (no data returned)");
+                    return;
+                }
+
+                //init photos dir
+                photosDir = [INSTALL_DIRECTORY stringByAppendingPathComponent:@"photos"];
+
+                //create photos directory if needed
+                if(YES != [[NSFileManager defaultManager] fileExistsAtPath:photosDir])
+                {
+                    if(YES != [[NSFileManager defaultManager] createDirectoryAtPath:photosDir withIntermediateDirectories:YES attributes:nil error:&error])
+                    {
+                        //err msg
+                        logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to create photos directory: %@", error]);
+                        return;
+                    }
+                }
+
+                //init formatter
+                formatter = [[NSDateFormatter alloc] init];
+                [formatter setDateFormat:@"yyyyMMdd_HHmmss"];
+
+                //build photo path (includes event type)
+                photoPath = [photosDir stringByAppendingPathComponent:[NSString stringWithFormat:@"photo_%@_%@.jpg", [formatter stringFromDate:timestamp], eventType]];
+
+                //save photo
+                if(YES != [imageData writeToFile:photoPath options:NSDataWritingAtomic error:&error])
+                {
+                    //err msg
+                    logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to save photo to %@: %@", photoPath, error]);
+                }
+                else
+                {
+                    //dbg msg
+                    logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"saved photo to %@", photoPath]);
+                }
+            }];
+        }
+        else
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"no client (login item) is connected, so cannot capture photo");
+        }
+    }
+
+    //send email notification?
+    if( (YES == [currentPrefs[PREF_EMAIL_ACTION] boolValue]) &&
+        (0 != [currentPrefs[PREF_EMAIL_ADDRESS] length]) )
+    {
+        //email address
+        NSString* emailAddr = currentPrefs[PREF_EMAIL_ADDRESS];
+
+        //date formatter
+        NSDateFormatter* formatter = nil;
+
+        //email body
+        NSString* emailBody = nil;
+
+        //shell command
+        NSString* shellCmd = nil;
+
+        //results
+        NSDictionary* results = nil;
+
+        //dbg msg
+        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"email notification enabled, sending to %@", emailAddr]);
+
+        //init formatter
+        formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+        //determine event description for email
+        NSString* eventDesc = ([eventType isEqualToString:@"usb"]) ? @"USB Insertion" : @"Lid Open";
+
+        //build email body
+        emailBody = [NSString stringWithFormat:@"DND Alert: %@ Detected\n\nTimestamp: %@\nHostname: %@\nUser: %@\nEvent Type: %@",
+                     eventDesc,
+                     [formatter stringFromDate:timestamp],
+                     [[NSHost currentHost] localizedName],
+                     user ?: USER_UNKNOWN,
+                     eventDesc];
+
+        //build shell command
+        shellCmd = [NSString stringWithFormat:@"echo '%@' | /usr/bin/mail -s 'DND Alert: %@ Detected' '%@'",
+                    emailBody, eventDesc, emailAddr];
+
+        //execute
+        results = execTask(@"/bin/sh", @[@"-c", shellCmd], YES);
+
+        //check result
+        if(nil != results[EXIT_CODE] && 0 == [results[EXIT_CODE] intValue])
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"sent email notification to %@", emailAddr]);
+        }
+        else
+        {
+            //err msg
+            logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to send email notification to %@: %@", emailAddr, results]);
+        }
+    }
+
+    return;
+}
+
+//start USB monitoring
+// called when screen locks and USB monitoring is enabled
+-(void)startUSBMonitor
+{
+    //current prefs
+    NSDictionary* currentPrefs = nil;
+
+    //get prefs
+    currentPrefs = [preferences get:nil];
+
+    //check if USB monitoring is enabled
+    if(YES != [currentPrefs[PREF_USB_MONITOR] boolValue])
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"USB monitoring preference not enabled, not starting");
+        return;
+    }
+
+    //already running?
+    if(nil != self.persistentUSBMonitor)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"USB monitor already running");
+        return;
+    }
+
+    //dbg msg
+    logMsg(LOG_DEBUG|LOG_TO_FILE, @"starting USB monitor (screen locked)");
+
+    //alloc/init
+    self.persistentUSBMonitor = [[USBMonitor alloc] init];
+
+    //set handler
+    self.persistentUSBMonitor.deviceInsertedHandler = ^(NSString* deviceName)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"USB device inserted while locked: %@", deviceName]);
+
+        //process as USB event
+        [self processEvent:[NSDate date] user:getConsoleUser() eventType:@"usb"];
+    };
+
+    //start
+    if(YES != [self.persistentUSBMonitor start])
+    {
+        //err msg
+        logMsg(LOG_ERR|LOG_TO_FILE, @"failed to start USB monitor");
+
+        //unset
+        self.persistentUSBMonitor = nil;
+    }
+
+    return;
+}
+
+//stop USB monitoring
+// called when screen unlocks
+-(void)stopUSBMonitor
+{
+    //not running?
+    if(nil == self.persistentUSBMonitor)
+    {
+        return;
+    }
+
+    //dbg msg
+    logMsg(LOG_DEBUG|LOG_TO_FILE, @"stopping USB monitor (screen unlocked)");
+
+    //stop
+    [self.persistentUSBMonitor stop];
+
+    //unset
+    self.persistentUSBMonitor = nil;
 
     return;
 }

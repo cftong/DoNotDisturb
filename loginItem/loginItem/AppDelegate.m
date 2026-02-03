@@ -24,6 +24,8 @@
 @synthesize daemonComms;
 @synthesize updateWindowController;
 @synthesize statusBarMenuController;
+@synthesize screenLockObserver;
+@synthesize screenUnlockObserver;
 
 //app's main interface
 // load status bar (unless prefs say otherwise) and kick off monitor
@@ -145,10 +147,30 @@ bail:
 
            //check
            [self check4Update];
-           
+
         });
     }
-    
+
+    //register for screen lock notification
+    self.screenLockObserver = [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"com.apple.screenIsLocked" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"screen locked, notifying daemon");
+
+        //tell daemon screen is locked
+        [self.daemonComms updatePreferences:@{PREF_SCREEN_LOCKED: @YES}];
+    }];
+
+    //register for screen unlock notification
+    self.screenUnlockObserver = [[NSDistributedNotificationCenter defaultCenter] addObserverForName:@"com.apple.screenIsUnlocked" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification)
+    {
+        //dbg msg
+        logMsg(LOG_DEBUG, @"screen unlocked, notifying daemon");
+
+        //tell daemon screen is unlocked
+        [self.daemonComms updatePreferences:@{PREF_SCREEN_LOCKED: @NO}];
+    }];
+
     return;
 }
 

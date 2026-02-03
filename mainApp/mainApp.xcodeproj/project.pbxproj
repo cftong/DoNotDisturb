@@ -35,7 +35,6 @@
 		CD17D58720179CD800F798D7 /* scan.png in Resources */ = {isa = PBXBuildFile; fileRef = CD17D58620179CD800F798D7 /* scan.png */; };
 		CD17D58B201A7F8500F798D7 /* WelcomeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D589201A7F8500F798D7 /* WelcomeWindowController.m */; };
 		CD17D58C201A7F8500F798D7 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD17D58A201A7F8500F798D7 /* Welcome.xib */; };
-		CD17D58F201A827A00F798D7 /* QuickResponseCode.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D58E201A827A00F798D7 /* QuickResponseCode.m */; };
 		CD1FD56B2089224F00151D1C /* appStore.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CD1FD56A2089224E00151D1C /* appStore.pdf */; };
 		CD2F407F204B417E0066673E /* alert.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2F407E204B417E0066673E /* alert.png */; };
 		CD2F4081204B41C90066673E /* hacker.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2F4080204B41C90066673E /* hacker.png */; };
@@ -112,8 +111,6 @@
 		CD17D588201A7F8500F798D7 /* WelcomeWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WelcomeWindowController.h; sourceTree = "<group>"; };
 		CD17D589201A7F8500F798D7 /* WelcomeWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WelcomeWindowController.m; sourceTree = "<group>"; };
 		CD17D58A201A7F8500F798D7 /* Welcome.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Welcome.xib; sourceTree = "<group>"; };
-		CD17D58D201A827A00F798D7 /* QuickResponseCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickResponseCode.h; sourceTree = "<group>"; };
-		CD17D58E201A827A00F798D7 /* QuickResponseCode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuickResponseCode.m; sourceTree = "<group>"; };
 		CD1FD56A2089224E00151D1C /* appStore.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = appStore.pdf; path = ../shared/images/appStore.pdf; sourceTree = "<group>"; };
 		CD2F407E204B417E0066673E /* alert.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = alert.png; sourceTree = "<group>"; };
 		CD2F4080204B41C90066673E /* hacker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hacker.png; sourceTree = "<group>"; };
@@ -179,8 +176,6 @@
 			children = (
 				7D564DCF1F18441500B8AAD6 /* AboutWindowController.h */,
 				7D564DC31F18441500B8AAD6 /* AboutWindowController.m */,
-				CD17D58D201A827A00F798D7 /* QuickResponseCode.h */,
-				CD17D58E201A827A00F798D7 /* QuickResponseCode.m */,
 				CD17D588201A7F8500F798D7 /* WelcomeWindowController.h */,
 				CD17D589201A7F8500F798D7 /* WelcomeWindowController.m */,
 				7D564DAC1F18434F00B8AAD6 /* AppDelegate.h */,
@@ -412,7 +407,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D564DEA1F1855E900B8AAD6 /* UpdateWindowController.m in Sources */,
-				CD17D58F201A827A00F798D7 /* QuickResponseCode.m in Sources */,
 				7D2582571F19FAD700D28B95 /* XPCDaemonClient.m in Sources */,
 				7D564DE61F18446200B8AAD6 /* Logging.m in Sources */,
 				7D16D69A1F65EF9900DB3161 /* Update.m in Sources */,

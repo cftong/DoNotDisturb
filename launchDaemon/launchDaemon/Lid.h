@@ -8,6 +8,7 @@
 //
 
 #import "Utilities.h"
+#import "USBMonitor.h"
 
 @import Foundation;
 
@@ -50,6 +51,9 @@ BOOL authViaTouchID(void);
 //undelivered alerts
 @property(nonatomic, retain)NSMutableArray* undeliveredAlerts;
 
+//persistent USB monitor (active while screen is locked)
+@property (nonatomic, retain) USBMonitor* persistentUSBMonitor;
+
 /* METHODS */
 
 //register for notifications
@@ -58,8 +62,14 @@ BOOL authViaTouchID(void);
 //register for notifications
 -(void)unregister4Notifications;
 
-//proces lid open event
--(void)processEvent:(NSDate*)timestamp user:(NSString*)user;
+//process event (lid open or USB insertion)
+-(void)processEvent:(NSDate*)timestamp user:(NSString*)user eventType:(NSString*)eventType;
+
+//start USB monitoring (called when screen locks)
+-(void)startUSBMonitor;
+
+//stop USB monitoring (called when screen unlocks)
+-(void)stopUSBMonitor;
 
 //execute action
 -(int)executeAction:(NSString*)path user:(NSString*)user;

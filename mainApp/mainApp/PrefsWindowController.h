@@ -20,8 +20,8 @@
 //action view
 #define TOOLBAR_ACTION 1
 
-//link view
-#define TOOLBAR_LINK 2
+//events view
+#define TOOLBAR_EVENTS 2
 
 //update view
 #define TOOLBAR_UPDATE 3
@@ -53,6 +53,15 @@
 //no updates button
 #define BUTTON_NO_UPDATES_MODE 8
 
+//photo action button
+#define BUTTON_PHOTO_ACTION 9
+
+//email action button
+#define BUTTON_EMAIL_ACTION 10
+
+//USB monitor button
+#define BUTTON_USB_MONITOR 11
+
 @interface PrefsWindowController : NSWindowController <NSTextFieldDelegate, NSToolbarDelegate>
 
 /* PROPERTIES */
@@ -75,43 +84,25 @@
 //execute path
 @property (weak) IBOutlet NSTextField *executePath;
 
-/* LINK VIEW */
+//photo action checkbox
+@property (weak) IBOutlet NSButton *photoActionBtn;
 
-//overlay view
-@property (strong) IBOutlet NSView *overlayView;
+//email action checkbox
+@property (weak) IBOutlet NSButton *emailActionBtn;
 
-//overlay spinner
-@property (weak) IBOutlet NSProgressIndicator *overlayProgressIndicator;
+//email address field
+@property (weak) IBOutlet NSTextField *emailAddress;
 
-//link toolbar item
-@property (weak) IBOutlet NSToolbarItem *linkToolbarItem;
+/* EVENTS VIEW */
 
-//link view
-@property (strong) IBOutlet NSView *linkView;
+//events view
+@property (strong) IBOutlet NSView *eventsView;
 
-//spinner
-@property (weak) IBOutlet NSProgressIndicator *qrcProgressIndicator;
+//events scroll view
+@property (weak) IBOutlet NSScrollView *eventsScrollView;
 
-//activity msg
-@property (weak) IBOutlet NSTextField *activityMessage;
-
-//qrc panel
-@property (strong) IBOutlet NSPanel *qrcPanel;
-
-//qrc image view
-@property (weak) IBOutlet NSImageView *qrcImageView;
-
-/* LINKED (DEVICES) VIEW */
-
-//linked view
-@property (strong) IBOutlet NSView *linkedView;
-
-//host (computer) name
-@property (weak) IBOutlet NSTextField *hostName;
-
-//device names
-@property (unsafe_unretained) IBOutlet NSTextView *deviceNames;
-
+//no events label
+@property (weak) IBOutlet NSTextField *noEventsLabel;
 
 /* UPDATE VIEW */
 

@@ -36,6 +36,12 @@
 //observer
 @property(nonatomic, retain)NSObject* appObserver;
 
+//screen lock observer
+@property(nonatomic, retain)id screenLockObserver;
+
+//screen unlock observer
+@property(nonatomic, retain)id screenUnlockObserver;
+
 /* METHODS */
 
 //init/show touch bar
