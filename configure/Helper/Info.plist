@@ -9,12 +9,12 @@
 	<key>CFBundleName</key>
 	<string>helper</string>
 	<key>CFBundleVersion</key>
-	<string>1.3.0</string>
+	<string>2.0.0</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright (c) 2026 Dharmesh Tarapore</string>
 	<key>SMAuthorizedClients</key>
 	<array>
-		<string>anchor apple generic and identifier "ca.tarapore.dnd.installer" and certificate leaf[subject.OU] = "7KGHU7S762"</string>
+		<string>anchor apple generic and identifier &quot;ca.tarapore.dnd.installer&quot; and certificate leaf[subject.OU] = &quot;7KGHU7S762&quot;</string>
 	</array>
 </dict>
 </plist>
