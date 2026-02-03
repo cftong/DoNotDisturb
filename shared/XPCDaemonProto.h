@@ -24,5 +24,8 @@
 //update preferences
 -(void)updatePreferences:(NSDictionary*)preferences;
 
+//delete event file
+-(void)deleteEventFile:(NSString*)filePath;
+
 @end
 

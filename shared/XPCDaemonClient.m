@@ -147,15 +147,32 @@
 {
     //dbg msg
     logMsg(LOG_DEBUG, @"sending request, via XPC, to update preferences");
-    
+
     //update prefs
     [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
           //err msg
           logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'updatePreferences' method on launch daemon (error: %@)", proxyError]);
-          
+
     }] updatePreferences:preferences];
-    
+
+    return;
+}
+
+//delete event file
+-(void)deleteEventFile:(NSString*)filePath
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"sending request, via XPC, to delete event file: %@", filePath]);
+
+    //delete file via daemon
+    [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    {
+          //err msg
+          logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'deleteEventFile' method on launch daemon (error: %@)", proxyError]);
+
+    }] deleteEventFile:filePath];
+
     return;
 }
 

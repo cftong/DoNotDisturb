@@ -73,14 +73,40 @@ extern Preferences* preferences;
 {
     //dbg msg
     logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: update preferences (%@)", preferences]);
-    
+
     //call into prefs obj to update
     if(YES != [preferences update:prefs])
     {
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to save preferences to %@", PREFS_FILE]);
     }
-    
+
+    return;
+}
+
+//delete event file
+-(void)deleteEventFile:(NSString*)filePath
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: delete event file (%@)", filePath]);
+
+    //sanity check: ensure path is within the photos directory
+    NSString* photosDir = [INSTALL_DIRECTORY stringByAppendingPathComponent:@"photos"];
+    if(NO == [filePath hasPrefix:photosDir])
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"refusing to delete file outside photos directory: %@", filePath]);
+        return;
+    }
+
+    //delete file
+    NSError* error = nil;
+    if(YES != [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error])
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to delete event file %@: %@", filePath, error]);
+    }
+
     return;
 }
 

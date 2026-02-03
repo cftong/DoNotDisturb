@@ -570,6 +570,7 @@ static const void* kFilePathKey = &kFilePathKey;
 
         //row view
         NSView* rowView = [[NSView alloc] initWithFrame:NSMakeRect(0, yOffset, documentView.frame.size.width, rowHeight)];
+        rowView.autoresizingMask = NSViewWidthSizable;
 
         //load image
         NSImage* image = [[NSImage alloc] initWithContentsOfFile:fullPath];
@@ -651,10 +652,11 @@ static const void* kFilePathKey = &kFilePathKey;
         [rowView addSubview:typeLabel];
 
         //delete button
-        NSButton* deleteButton = [[NSButton alloc] initWithFrame:NSMakeRect(documentView.frame.size.width - 70, 30, 50, 24)];
+        NSButton* deleteButton = [[NSButton alloc] initWithFrame:NSMakeRect(rowView.frame.size.width - 90, 30, 70, 24)];
         deleteButton.title = @"Delete";
         deleteButton.bezelStyle = NSBezelStyleRounded;
         deleteButton.font = [NSFont systemFontOfSize:11.0];
+        deleteButton.autoresizingMask = NSViewMinXMargin;
         [deleteButton setAction:@selector(deleteEvent:)];
         [deleteButton setTarget:self];
 
@@ -698,10 +700,10 @@ static const void* kFilePathKey = &kFilePathKey;
     //get file path
     NSString* filePath = objc_getAssociatedObject(sender, kFilePathKey);
 
-    //delete file
+    //delete file via daemon (requires elevated permissions)
     if(nil != filePath)
     {
-        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        [self.daemonComms deleteEventFile:filePath];
     }
 
     //refresh events view
@@ -709,6 +711,7 @@ static const void* kFilePathKey = &kFilePathKey;
 
     return;
 }
+
 
 //get height of toolbar
 // based on: https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Toolbars/Tasks/DeterminingOverflow.html#//apple_ref/doc/uid/20000859-SW2
