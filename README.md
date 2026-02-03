@@ -1,5 +1,7 @@
 # Do Not Disturb
 
+This is a heavily-modified fork of Objective-See's *excellent* Do Not Disturb app. Key enhancements include native webcam photo capture on lid-open events, email alerts for unauthorized access attempts, USB device logging while the Mac is locked, automatic log rotation (7MB limit) to prevent disk bloat, and improved notification handling that dismisses alerts when clicked.
+
 'Do Not Disturb' (DnD) is a free open-source security tool for macOS that aims to detect unauthorized physical access to your laptop!
 Full details and usage instructions can be found [here](https://objective-see.com/products/dnd.html). 
 
