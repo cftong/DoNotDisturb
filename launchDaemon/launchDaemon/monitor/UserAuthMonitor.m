@@ -404,7 +404,13 @@ bail:
     
     //set touch id flag
     event.wasTouchID = [event.text containsString:@"Touch ID authentication"];
-    
+
+    //set Apple Watch flag
+    // check for various possible strings in auth event
+    event.wasAppleWatch = [event.text containsString:@"Auto Unlock"] ||
+                          [event.text containsString:@"Auto-unlock"] ||
+                          [event.text containsString:@"Apple Watch"];
+
     //broadcast event
     [[NSNotificationCenter defaultCenter] postNotificationName:AUTH_NOTIFICATION object:nil userInfo:@{AUTH_NOTIFICATION:event}];
     

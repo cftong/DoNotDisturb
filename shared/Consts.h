@@ -164,6 +164,10 @@
 #define PREF_TOUCHID_MODE @"touchIDMode"
 
 //prefs
+// Apple Watch mode
+#define PREF_APPLEWATCH_MODE @"appleWatchMode"
+
+//prefs
 // start mode
 #define PREF_START_MODE @"startMode"
 

@@ -32,6 +32,9 @@
 //flag for touch ID events
 @property(nonatomic) BOOL wasTouchID;
 
+//flag for Apple Watch events
+@property(nonatomic) BOOL wasAppleWatch;
+
 //timestamp
 @property(nonatomic, retain)NSDate* timestamp;
 

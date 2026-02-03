@@ -63,6 +63,13 @@ static const void* kFilePathKey = &kFilePathKey;
         ((NSButton*)[self.generalView viewWithTag:BUTTON_TOUCHID_MODE]).enabled = YES;
     }
 
+    //enable Apple Watch mode option (macOS 10.12+)
+    if([[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){10, 12, 0}])
+    {
+        //enable button
+        ((NSButton*)[self.generalView viewWithTag:BUTTON_APPLEWATCH_MODE]).enabled = YES;
+    }
+
     return;
 }
 
@@ -130,6 +137,9 @@ static const void* kFilePathKey = &kFilePathKey;
 
             //set 'touch id' button state
             ((NSButton*)[view viewWithTag:BUTTON_TOUCHID_MODE]).state = [self.preferences[PREF_TOUCHID_MODE] boolValue];
+
+            //set 'Apple Watch' button state
+            ((NSButton*)[view viewWithTag:BUTTON_APPLEWATCH_MODE]).state = [self.preferences[PREF_APPLEWATCH_MODE] boolValue];
 
             //set 'no remote tasking' button state
             ((NSButton*)[view viewWithTag:BUTTON_NO_REMOTE_TASKING]).state = [self.preferences[PREF_NO_REMOTE_TASKING] boolValue];
@@ -264,6 +274,15 @@ static const void* kFilePathKey = &kFilePathKey;
         {
             //set pref
             preferences[PREF_TOUCHID_MODE] = state;
+
+            break;
+        }
+
+        //Apple Watch mode
+        case BUTTON_APPLEWATCH_MODE:
+        {
+            //set pref
+            preferences[PREF_APPLEWATCH_MODE] = state;
 
             break;
         }

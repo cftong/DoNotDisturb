@@ -40,6 +40,10 @@ extern Preferences* preferences;
 //XPC listener
 extern XPCListener* xpcListener;
 
+//forward declarations
+BOOL authViaTouchID(void);
+BOOL authViaAppleWatch(void);
+
 //callback for power/lid events
 static void pmDomainChange(void *refcon, io_service_t service, uint32_t messageType, void *messageArgument)
 {
@@ -117,7 +121,7 @@ static void pmDomainChange(void *refcon, io_service_t service, uint32_t messageT
         {
             //dbg msg
             logMsg(LOG_DEBUG, @"'touch id' mode enabled, waiting up to 10 seconds for biometric auth event");
-            
+
             //user auth'd via touchID?
             // will wait for up to 10 seconds
             if(YES == authViaTouchID())
@@ -125,16 +129,40 @@ static void pmDomainChange(void *refcon, io_service_t service, uint32_t messageT
                 //dbg msg
                 // log to file
                 logMsg(LOG_DEBUG|LOG_TO_FILE, @"user authenticated via touchID, so ignoring event");
-                
+
                 //bail
                 // will ignore the event
                 goto bail;
             }
-            
+
             //dbg msg
             logMsg(LOG_DEBUG, @"no touch id auth event found, so will process event");
         }
-        
+
+        //Apple Watch mode?
+        // wait up to 10 seconds, and ignore event if user auth'd via Apple Watch
+        if(YES == [currentPrefs[PREF_APPLEWATCH_MODE] boolValue])
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"'Apple Watch' mode enabled, waiting up to 10 seconds for auth event");
+
+            //user auth'd via Apple Watch?
+            // will wait for up to 10 seconds
+            if(YES == authViaAppleWatch())
+            {
+                //dbg msg
+                // log to file
+                logMsg(LOG_DEBUG|LOG_TO_FILE, @"user authenticated via Apple Watch, so ignoring event");
+
+                //bail
+                // will ignore the event
+                goto bail;
+            }
+
+            //dbg msg
+            logMsg(LOG_DEBUG, @"no Apple Watch auth event found, so will process event");
+        }
+
         //process event
         // report to user, execute actions, etc
         [lid processEvent:timestamp user:getConsoleUser() eventType:@"lid"];
@@ -237,8 +265,48 @@ BOOL authViaTouchID()
     
     //remove auth observer
     [[NSNotificationCenter defaultCenter] removeObserver:userAuthObserver];
-    
+
     return touchIDAuth;
+}
+
+//check if user auth'd via Apple Watch (Auto Unlock)
+// monitors system logs for com.apple.sharing:AutoUnlock entries
+BOOL authViaAppleWatch()
+{
+    //result
+    BOOL appleWatchAuth = NO;
+
+    //check up to 10 times (once per second for 10 seconds)
+    for(int i = 0; i < 10; i++)
+    {
+        //check system logs for recent Apple Watch unlock activity
+        NSDictionary* results = execTask(LOG, @[@"show", @"--last", @"5s", @"--predicate", @"subsystem == \"com.apple.sharing\" AND category == \"AutoUnlock\"", @"--style", @"compact"], YES);
+
+        //check output for Apple Watch unlock indicators
+        NSString* output = results[STDOUT];
+        if(nil != output)
+        {
+            //look for key phrases indicating Apple Watch unlock
+            if([output containsString:@"Connecting to watches"] ||
+               [output containsString:@"Watch info"] ||
+               [output containsString:@"Automation: Attempt Start"])
+            {
+                //dbg msg
+                logMsg(LOG_DEBUG, @"detected Apple Watch unlock activity in system logs");
+
+                //set flag
+                appleWatchAuth = YES;
+
+                //done
+                break;
+            }
+        }
+
+        //wait 1 second before next check
+        [NSThread sleepForTimeInterval:1.0];
+    }
+    NSLog(@"Returning %@", appleWatchAuth);
+    return appleWatchAuth;
 }
 
 @implementation Lid

@@ -65,6 +65,9 @@
 //USB monitor button
 #define BUTTON_USB_MONITOR 11
 
+//Apple Watch mode button
+#define BUTTON_APPLEWATCH_MODE 12
+
 @interface PrefsWindowController : NSWindowController <NSTextFieldDelegate, NSToolbarDelegate>
 
 /* PROPERTIES */
