@@ -68,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1F71B4282F327A6500030C52 /* mainApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mainApp.entitlements; path = mainApp/mainApp.entitlements; sourceTree = "<group>"; };
 		7D16D6981F65EF9900DB3161 /* Update.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Update.h; path = ../shared/Update.h; sourceTree = "<group>"; };
 		7D16D6991F65EF9900DB3161 /* Update.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Update.m; path = ../shared/Update.m; sourceTree = "<group>"; };
 		7D2582551F19FAD700D28B95 /* XPCDaemonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonClient.h; path = ../shared/XPCDaemonClient.h; sourceTree = "<group>"; };
@@ -156,6 +157,7 @@
 		7D564DA01F18434F00B8AAD6 = {
 			isa = PBXGroup;
 			children = (
+				1F71B4282F327A6500030C52 /* mainApp.entitlements */,
 				7D564DE21F18445400B8AAD6 /* shared */,
 				7D564DAB1F18434F00B8AAD6 /* src */,
 				7D564DAA1F18434F00B8AAD6 /* Products */,
@@ -549,7 +551,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = mainApp/mainApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -571,7 +573,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = mainApp/mainApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

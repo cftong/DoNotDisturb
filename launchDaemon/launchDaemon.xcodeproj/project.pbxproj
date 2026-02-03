@@ -62,8 +62,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1F71B4292F327A7600030C52 /* launchDaemon.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = launchDaemon.entitlements; path = launchDaemon/launchDaemon.entitlements; sourceTree = "<group>"; };
 		2063725B203DC70A006D4C38 /* Do Not Disturb.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Do Not Disturb.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7D2582591F1A872400D28B95 /* ca.tarapore.dnd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "ca.tarapore.dnd.plist"; path = "launchDaemon/ca.tarapore.dnd.plist"; sourceTree = "<group>"; };
+		7D2582591F1A872400D28B95 /* ca.tarapore.dnd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ca.tarapore.dnd.plist; path = launchDaemon/ca.tarapore.dnd.plist; sourceTree = "<group>"; };
 		7D46FEFD1F5E41F000FEB0F8 /* XPCListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XPCListener.m; sourceTree = "<group>"; };
 		7D46FEFE1F5E41F000FEB0F8 /* XPCListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCListener.h; sourceTree = "<group>"; };
 		7D4FF8C31F0E1402001A4A68 /* libbsm.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbsm.tbd; path = usr/lib/libbsm.tbd; sourceTree = SDKROOT; };
@@ -145,6 +146,7 @@
 		7D7755C71F02DF9400D0017D = {
 			isa = PBXGroup;
 			children = (
+				1F71B4292F327A7600030C52 /* launchDaemon.entitlements */,
 				CD3307C42036399900F10D71 /* Supporting Files */,
 				7D7755D21F02DF9500D0017D /* src */,
 				2063725C203DC70A006D4C38 /* Resources */,
@@ -497,6 +499,7 @@
 		7D7755D81F02DF9500D0017D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = launchDaemon/launchDaemon.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7KGHU7S762;
@@ -522,6 +525,7 @@
 		7D7755D91F02DF9500D0017D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = launchDaemon/launchDaemon.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7KGHU7S762;

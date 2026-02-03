@@ -86,12 +86,13 @@
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1F71B4272F32790800030C52 /* configure.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = configure.entitlements; path = configure/configure.entitlements; sourceTree = "<group>"; };
 		4BE4904C10445D49006BE471 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE4904D10445D49006BE471 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4BE4905310445DDD006BE471 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BE4905410445DDD006BE471 /* launchDaemon.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = launchDaemon.plist; sourceTree = "<group>"; };
 		4BE4905510445DDD006BE471 /* Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helper.m; sourceTree = "<group>"; };
-		4BE4905D10445E0A006BE471 /* ca.tarapore.dnd.installer.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ca.tarapore.dnd.installer.helper"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BE4905D10445E0A006BE471 /* ca.tarapore.dnd.installer.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ca.tarapore.dnd.installer.helper; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE4906310445F2F006BE471 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		4BE4906710445F36006BE471 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		8D1107320486CEB800E47090 /* Do Not Disturb Installer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Do Not Disturb Installer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,7 +111,7 @@
 		CD17D54920104EE700F798D7 /* ConfigureWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfigureWindowController.xib; sourceTree = "<group>"; };
 		CD17D54B20104EE700F798D7 /* AboutWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutWindowController.m; sourceTree = "<group>"; };
 		CD17D55D201148F900F798D7 /* configure.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = configure.sh; sourceTree = "<group>"; };
-		CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "ca.tarapore.dnd.plist"; path = "../launchDaemon/launchDaemon/ca.tarapore.dnd.plist"; sourceTree = "<group>"; };
+		CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ca.tarapore.dnd.plist; path = ../launchDaemon/launchDaemon/ca.tarapore.dnd.plist; sourceTree = "<group>"; };
 		CD18D64C200DA301005609F9 /* XPCProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCProtocol.h; path = Shared/XPCProtocol.h; sourceTree = SOURCE_ROOT; };
 		CD3307AD203567D400F10D71 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD73DA8F2004629D001FFC84 /* HelperInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelperInterface.h; sourceTree = "<group>"; };
@@ -162,6 +163,7 @@
 		29B97314FDCFA39411CA2CEA /* SMJobBless */ = {
 			isa = PBXGroup;
 			children = (
+				1F71B4272F32790800030C52 /* configure.entitlements */,
 				CD17D56120116C2000F798D7 /* SupportingFiles */,
 				CD17D55C201148F900F798D7 /* Script */,
 				CD73DA9C20049158001FFC84 /* Shared */,
@@ -451,8 +453,8 @@
 					__launchd_plist,
 					Helper/launchDaemon.plist,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.tarapore.dnd.installer.helper";
-				PRODUCT_NAME = "ca.tarapore.dnd.installer.helper";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd.installer.helper;
+				PRODUCT_NAME = ca.tarapore.dnd.installer.helper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
@@ -480,8 +482,8 @@
 					__launchd_plist,
 					Helper/launchDaemon.plist,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.tarapore.dnd.installer.helper";
-				PRODUCT_NAME = "ca.tarapore.dnd.installer.helper";
+				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd.installer.helper;
+				PRODUCT_NAME = ca.tarapore.dnd.installer.helper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
@@ -493,6 +495,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = configure/configure.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -516,6 +519,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = configure/configure.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -607,7 +611,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
