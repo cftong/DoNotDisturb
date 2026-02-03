@@ -218,6 +218,9 @@
 //log file
 #define LOG_FILE_NAME @"DND.log"
 
+//log max size (7MB)
+#define LOG_MAX_SIZE (7 * 1024 * 1024)
+
 //alert key
 // timestamp
 #define ALERT_TIMESTAMP @"timestamp"

@@ -90,11 +90,24 @@ void log2File(NSString* msg)
     //sync
     @synchronized(logFileHandle)
     {
+        //check file size and rotate if needed
+        NSString* path = logFilePath();
+        NSDictionary* attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
+        if([attrs[NSFileSize] unsignedLongLongValue] > LOG_MAX_SIZE)
+        {
+            //truncate: close, delete, recreate, reopen
+            [logFileHandle closeFile];
+            [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+            [[NSFileManager defaultManager] createFileAtPath:path contents:nil attributes:nil];
+            logFileHandle = [NSFileHandle fileHandleForWritingAtPath:path];
+            [logFileHandle writeData:[@"[log rotated due to size limit]\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+
         //append timestamp
         // write msg out to disk
         [logFileHandle writeData:[[NSString stringWithFormat:@"%@: %@\n", [NSDate date], msg] dataUsingEncoding:NSUTF8StringEncoding]];
     }
-    
+
     return;
 }
 

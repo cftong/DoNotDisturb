@@ -140,6 +140,9 @@
     [[NSWorkspace sharedWorkspace] openApplicationAtURL:[NSURL fileURLWithPath:mainAppPath]
                                           configuration:config
                                       completionHandler:nil];
+
+    //dismiss the notification after handling click
+    [center removeDeliveredNotification:notification];
 }
 
 @end
