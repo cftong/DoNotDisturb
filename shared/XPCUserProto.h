@@ -9,6 +9,8 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol XPCUserProtocol
 
 //show an alert
@@ -19,7 +21,9 @@
 -(void)alertDismiss;
 
 //take a picture
--(void)captureImage:(void (^)(NSData *))reply;
+-(void)captureImage:(void (^)(NSData * _Nullable))reply;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

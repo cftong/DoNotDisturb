@@ -12,17 +12,21 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol XPCProtocol
 
 //install
--(void)install:(NSString*)app reply:(void (^)(NSNumber*))reply;
+-(void)install:(NSString*)app reply:(void (^)(NSNumber* _Nullable))reply;
 
 //uninstall
--(void)uninstall:(NSString*)app full:(BOOL)full reply:(void (^)(NSNumber*))reply;
+-(void)uninstall:(NSString*)app full:(BOOL)full reply:(void (^)(NSNumber* _Nullable))reply;
 
 //remove (self)
 -(void)remove;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif

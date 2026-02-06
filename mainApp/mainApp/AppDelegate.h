@@ -10,11 +10,13 @@
 @import Cocoa;
 
 #import "XPCDaemonClient.h"
-#import "AboutWindowController.h"
 #import "PrefsWindowController.h"
 #import "UpdateWindowController.h"
 #import "WelcomeWindowController.h"
 #import "3rdParty/HyperlinkTextField.h"
+
+// Forward declaration for Swift class
+@class AboutWindowController;
 
 @interface AppDelegate : NSApplication <NSApplicationDelegate>
 

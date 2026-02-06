@@ -11,9 +11,13 @@
 
 #import "XPCUserProto.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface XPCUser : NSObject <XPCUserProtocol, NSUserNotificationCenterDelegate>
 {
-    
+
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

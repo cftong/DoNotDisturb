@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F71B4292F327B0000030C52 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F71B42A2F327B0000030C52 /* AboutWindowController.swift */; };
 		7D16D69A1F65EF9900DB3161 /* Update.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16D6991F65EF9900DB3161 /* Update.m */; };
 		7D2582571F19FAD700D28B95 /* XPCDaemonClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2582561F19FAD700D28B95 /* XPCDaemonClient.m */; };
 		7D46FF041F5F496800FEB0F8 /* patrons.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7D46FF031F5F496800FEB0F8 /* patrons.txt */; };
@@ -14,7 +15,6 @@
 		7D564DB11F18434F00B8AAD6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D564DB01F18434F00B8AAD6 /* main.m */; };
 		7D564DB61F18434F00B8AAD6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D564DB41F18434F00B8AAD6 /* MainMenu.xib */; };
 		7D564DD61F18441500B8AAD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D564DBF1F18441500B8AAD6 /* Assets.xcassets */; };
-		7D564DDA1F18441500B8AAD6 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D564DC31F18441500B8AAD6 /* AboutWindowController.m */; };
 		7D564DDC1F18441500B8AAD6 /* AboutWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D564DC71F18441500B8AAD6 /* AboutWindow.xib */; };
 		7D564DDF1F18441500B8AAD6 /* HyperlinkTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D564DCE1F18441500B8AAD6 /* HyperlinkTextField.m */; };
 		7D564DE61F18446200B8AAD6 /* Logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D564DE41F18446200B8AAD6 /* Logging.m */; };
@@ -69,6 +69,7 @@
 
 /* Begin PBXFileReference section */
 		1F71B4282F327A6500030C52 /* mainApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mainApp.entitlements; path = mainApp/mainApp.entitlements; sourceTree = "<group>"; };
+		1F71B42A2F327B0000030C52 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		7D16D6981F65EF9900DB3161 /* Update.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Update.h; path = ../shared/Update.h; sourceTree = "<group>"; };
 		7D16D6991F65EF9900DB3161 /* Update.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Update.m; path = ../shared/Update.m; sourceTree = "<group>"; };
 		7D2582551F19FAD700D28B95 /* XPCDaemonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPCDaemonClient.h; path = ../shared/XPCDaemonClient.h; sourceTree = "<group>"; };
@@ -82,12 +83,10 @@
 		7D564DB51F18434F00B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		7D564DB71F18434F00B8AAD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D564DBF1F18441500B8AAD6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7D564DC31F18441500B8AAD6 /* AboutWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutWindowController.m; sourceTree = "<group>"; };
 		7D564DC61F18441500B8AAD6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
 		7D564DC71F18441500B8AAD6 /* AboutWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AboutWindow.xib; sourceTree = "<group>"; };
 		7D564DCD1F18441500B8AAD6 /* HyperlinkTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HyperlinkTextField.h; sourceTree = "<group>"; };
 		7D564DCE1F18441500B8AAD6 /* HyperlinkTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HyperlinkTextField.m; sourceTree = "<group>"; };
-		7D564DCF1F18441500B8AAD6 /* AboutWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutWindowController.h; sourceTree = "<group>"; };
 		7D564DE31F18446200B8AAD6 /* Consts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Consts.h; path = ../shared/Consts.h; sourceTree = "<group>"; };
 		7D564DE41F18446200B8AAD6 /* Logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Logging.m; path = ../shared/Logging.m; sourceTree = "<group>"; };
 		7D564DE51F18446200B8AAD6 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../shared/Logging.h; sourceTree = "<group>"; };
@@ -176,8 +175,7 @@
 		7D564DAB1F18434F00B8AAD6 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				7D564DCF1F18441500B8AAD6 /* AboutWindowController.h */,
-				7D564DC31F18441500B8AAD6 /* AboutWindowController.m */,
+				1F71B42A2F327B0000030C52 /* AboutWindowController.swift */,
 				CD17D588201A7F8500F798D7 /* WelcomeWindowController.h */,
 				CD17D589201A7F8500F798D7 /* WelcomeWindowController.m */,
 				7D564DAC1F18434F00B8AAD6 /* AppDelegate.h */,
@@ -416,7 +414,7 @@
 				7D564DAE1F18434F00B8AAD6 /* AppDelegate.m in Sources */,
 				CD17D58B201A7F8500F798D7 /* WelcomeWindowController.m in Sources */,
 				7D564DDF1F18441500B8AAD6 /* HyperlinkTextField.m in Sources */,
-				7D564DDA1F18441500B8AAD6 /* AboutWindowController.m in Sources */,
+				1F71B4292F327B0000030C52 /* AboutWindowController.swift in Sources */,
 				7DD2BF651F1DC41600B33214 /* Utilities.m in Sources */,
 				7D75537F1F22E40E0010FE88 /* PrefsWindowController.m in Sources */,
 			);
@@ -555,6 +553,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 7KGHU7S762;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -566,6 +565,8 @@
 				PRODUCT_NAME = "Do Not Disturb";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "mainApp/mainApp-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -577,6 +578,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 7KGHU7S762;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -589,6 +591,8 @@
 				PRODUCT_NAME = "Do Not Disturb";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "mainApp/mainApp-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

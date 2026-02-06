@@ -6,7 +6,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AboutWindowController">
+        <customObject id="-2" userLabel="File's Owner" customClass="AboutWindowController" customModule="Do_Not_Disturb" customModuleProvider="target">
             <connections>
                 <outlet property="patrons" destination="j2X-Ub-niY" id="gfG-o9-RbL"/>
                 <outlet property="versionLabel" destination="OSm-xS-Dmd" id="luW-4O-fYe"/>

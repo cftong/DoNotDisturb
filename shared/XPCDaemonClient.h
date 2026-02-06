@@ -11,29 +11,31 @@
 
 #import "XPCDaemonProto.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface XPCDaemonClient : NSObject
 {
-    
+
 }
 
 /* PROPERTIES */
 
 //xpc connection
-@property (atomic, strong, readwrite) NSXPCConnection* xpcServiceConnection;
+@property (atomic, strong, readwrite, nullable) NSXPCConnection* xpcServiceConnection;
 
 /* METHODS */
 
 //ask daemon for QRC info
 // name, uuid, key, key size, etc...
--(void)qrcRequest:(void (^)(NSData* qrcInfo))reply;
+-(void)qrcRequest:(void (^)(NSData* _Nullable qrcInfo))reply;
 
 //wait for phone to complete registration
 // calls into framework that comms w/ server to wait for phone
--(void)recvRegistrationACK:(void (^)(NSDictionary* registrationInfo))reply;
+-(void)recvRegistrationACK:(void (^)(NSDictionary* _Nullable registrationInfo))reply;
 
 //get preferences
 // note: synchronous
--(NSDictionary*)getPreferences:(NSString*)preference;
+-(NSDictionary* _Nullable)getPreferences:(NSString* _Nullable)preference;
 
 //update (save) preferences
 -(void)updatePreferences:(NSDictionary*)preferences;
@@ -42,3 +44,5 @@
 -(void)deleteEventFile:(NSString*)filePath;
 
 @end
+
+NS_ASSUME_NONNULL_END

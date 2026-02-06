@@ -499,6 +499,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 7KGHU7S762;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -510,6 +511,8 @@
 				PRODUCT_NAME = "Do Not Disturb Installer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Configure/Configure-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -523,6 +526,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 7KGHU7S762;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
@@ -534,6 +538,8 @@
 				PRODUCT_NAME = "Do Not Disturb Installer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Configure/Configure-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

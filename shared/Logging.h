@@ -13,6 +13,8 @@
 @import Foundation;
 #import <syslog.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 //log to file flag
 #define LOG_TO_FILE 0x10
 
@@ -24,12 +26,14 @@ void logMsg(int level, NSString* msg);
 BOOL initLogging(void);
 
 //get path to log file
-NSString* logFilePath(void);
+NSString* _Nullable logFilePath(void);
 
 //de-init logging
 void deinitLogging(void);
 
 //log to file
 void log2File(NSString* msg);
+
+NS_ASSUME_NONNULL_END
 
 #endif

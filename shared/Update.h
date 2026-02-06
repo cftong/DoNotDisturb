@@ -13,14 +13,17 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Update : NSObject
 
 
 //check for an update
 // will invoke app delegate method to update UI when check completes
--(void)checkForUpdate:(void (^)(NSUInteger result, NSString* latestVersion))completionHandler;
+-(void)checkForUpdate:(void (^)(NSUInteger result, NSString* _Nullable latestVersion))completionHandler;
 
 @end
 
+NS_ASSUME_NONNULL_END
 
 #endif /* Update_h */

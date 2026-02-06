@@ -11,9 +11,11 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Configure : NSObject
 {
-    
+
 }
 
 /* PROPERTIES */
@@ -22,7 +24,7 @@
 @property(nonatomic) BOOL gotHelp;
 
 //daemom comms object
-@property(nonatomic, retain) HelperComms* xpcComms;
+@property(nonatomic, retain, nullable) HelperComms* xpcComms;
 
 /* METHODS */
 
@@ -42,4 +44,6 @@
 -(void)removeHelper;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

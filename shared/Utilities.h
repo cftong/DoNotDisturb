@@ -18,6 +18,8 @@
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 //enum of lid states
 typedef NS_ENUM(int, LidState)
 {
@@ -30,34 +32,34 @@ typedef NS_ENUM(int, LidState)
 
 //get app's version
 // extracted from Info.plist
-NSString* getAppVersion(void);
+NSString* _Nullable getAppVersion(void);
 
 //get path to (main) app
 // login item is in app bundle, so parse up to get main app
-NSString* getMainAppPath(void);
+NSString* _Nullable getMainAppPath(void);
 
 //get name of logged in user
-NSString* getConsoleUser(void);
+NSString* _Nullable getConsoleUser(void);
 
 //verify that an app bundle is
 // a) signed
 // b) signed with signing auth
-OSStatus verifyApp(NSString* path, NSString* signingAuth);
+OSStatus verifyApp(NSString* path, NSString* _Nullable signingAuth);
 
 //get state of lid
 int getLidState(void);
 
 //get process name
 // either via app bundle, or path
-NSString* getProcessName(NSString* path);
+NSString* _Nullable getProcessName(NSString* path);
 
 //given a pid
 // get process's path
-NSString* getProcessPath(pid_t pid);
+NSString* _Nullable getProcessPath(pid_t pid);
 
 //given a process path and user
 // return array of all matching pids
-NSMutableArray* getProcessIDs(NSString* processPath, int userID);
+NSMutableArray* _Nullable getProcessIDs(NSString* _Nullable processPath, int userID);
 
 //wait until a window is non nil
 // then make it modal
@@ -71,7 +73,7 @@ BOOL setFileOwner(NSString* path, NSNumber* groupID, NSNumber* ownerID, BOOL rec
 
 //exec a process with args
 // if 'shouldWait' is set, wait and return stdout/in and termination status
-NSMutableDictionary* execTask(NSString* binaryPath, NSArray* arguments, BOOL shouldWait);
+NSMutableDictionary* _Nullable execTask(NSString* binaryPath, NSArray* arguments, BOOL shouldWait);
 
 //toggle login item
 // either add (install) or remove (uninstall)
@@ -81,7 +83,7 @@ BOOL toggleLoginItem(NSURL* loginItem, int toggleFlag);
 BOOL hasTouchID(void);
 
 //get current console user
-NSString* currentConsoleUser(SCDynamicStoreRef store);
+NSString* _Nullable currentConsoleUser(SCDynamicStoreRef _Nullable store);
 
 //macOS Mojave+
 // gotta request camera access
@@ -89,5 +91,7 @@ void requestCameraAccess(void);
 
 //check if (true) dark mode
 BOOL isDarkMode(void);
+
+NS_ASSUME_NONNULL_END
 
 #endif
