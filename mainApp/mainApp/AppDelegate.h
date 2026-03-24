@@ -39,5 +39,8 @@
 //build/return path to login item
 -(NSString*)path2LoginItem;
 
+//register the launch daemon via SMAppService
+-(void)registerDaemon;
+
 @end
 

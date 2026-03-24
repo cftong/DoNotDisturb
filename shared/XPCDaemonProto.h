@@ -23,8 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 //get preferences
 -(void)getPreferences:(NSString* _Nullable)preference reply:(void (^)(NSDictionary* _Nullable preferences))reply;
 
-//update preferences
+//update preferences (fire-and-forget)
 -(void)updatePreferences:(NSDictionary*)preferences;
+
+//update preferences and call reply when saved to disk
+// use this when the caller needs to know the save completed (e.g. before app exits)
+-(void)updatePreferencesSync:(NSDictionary*)preferences reply:(void (^)(void))reply;
 
 //delete event file
 -(void)deleteEventFile:(NSString*)filePath;

@@ -16,9 +16,54 @@
 #import "XPCUser.h"
 #endif
 
+// NSUserDefaults key for local preferences cache
+// Used as fallback when daemon is not running
+static NSString* const kLocalPrefsKey = @"cachedDaemonPreferences";
+
 @implementation XPCDaemonClient
 
 @synthesize xpcServiceConnection;
+
+//save preferences to local cache (NSUserDefaults)
+// merges incoming keys into the existing cache so partial updates
+// (e.g. a single toggle) don't wipe out previously cached values
+-(void)cachePreferencesLocally:(NSDictionary*)preferences
+{
+    if(nil == preferences || 0 == preferences.count)
+    {
+        return;
+    }
+
+    //load existing cache and merge
+    NSMutableDictionary* merged = [NSMutableDictionary dictionary];
+    NSDictionary* existing = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kLocalPrefsKey];
+    if(nil != existing)
+    {
+        [merged addEntriesFromDictionary:existing];
+    }
+
+    //apply incoming keys (overwrites per-key)
+    [merged addEntriesFromDictionary:preferences];
+
+    //save merged result
+    [[NSUserDefaults standardUserDefaults] setObject:merged forKey:kLocalPrefsKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"cached preferences locally via NSUserDefaults (%lu keys)", (unsigned long)merged.count]);
+}
+
+//load preferences from local cache (NSUserDefaults)
+-(NSDictionary*)loadCachedPreferences
+{
+    NSDictionary* cached = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kLocalPrefsKey];
+
+    if(nil != cached)
+    {
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"loaded cached preferences from NSUserDefaults: %@", cached]);
+    }
+
+    return cached;
+}
 
 //init
 // create XPC connection & set remote obj interface
@@ -136,25 +181,108 @@
     }];
     
     //XPC is async
-    // wait for preferences from daemon
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    
+    // wait for preferences from daemon (2 second timeout — this runs on a background thread)
+    if(0 != dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC)))
+    {
+        //err msg
+        logMsg(LOG_ERR, @"getPreferences: timed out waiting for daemon reply (2s) — daemon may not be running or XPC connection rejected");
+    }
+
+    //daemon returned prefs? cache them locally
+    if(nil != preferences)
+    {
+        [self cachePreferencesLocally:preferences];
+    }
+    else
+    {
+        //daemon unavailable — fall back to local cache
+        logMsg(LOG_DEBUG, @"getPreferences: daemon returned nil, falling back to local cache");
+        preferences = [self loadCachedPreferences];
+    }
+
     return preferences;
 }
 
-//update (save) preferences
+//update (save) preferences (fire-and-forget)
 -(void)updatePreferences:(NSDictionary*)preferences
 {
     //dbg msg
     logMsg(LOG_DEBUG, @"sending request, via XPC, to update preferences");
 
-    //update prefs
+    //always cache locally so prefs survive even if daemon is down
+    [self cachePreferencesLocally:preferences];
+
+    //update prefs via daemon
     [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
     {
           //err msg
           logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'updatePreferences' method on launch daemon (error: %@)", proxyError]);
 
     }] updatePreferences:preferences];
+
+    return;
+}
+
+//update (save) preferences, blocking until daemon confirms the save completed
+// use when the caller may exit immediately after (e.g. windowWillClose:)
+-(void)updatePreferencesSync:(NSDictionary*)preferences
+{
+    //semaphore to wait for daemon reply
+    dispatch_semaphore_t semaphore = NULL;
+
+    //flag: sync call succeeded
+    __block BOOL syncSucceeded = NO;
+
+    //dbg msg
+    logMsg(LOG_DEBUG, @"sending request, via XPC, to update preferences (sync)");
+
+    //always cache locally so prefs survive even if daemon is down
+    [self cachePreferencesLocally:preferences];
+
+    //init semaphore
+    semaphore = dispatch_semaphore_create(0);
+
+    //update prefs, waiting for reply
+    [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to execute 'updatePreferencesSync' method on launch daemon (error: %@)", proxyError]);
+
+        //unblock caller even on error
+        dispatch_semaphore_signal(semaphore);
+
+    }] updatePreferencesSync:preferences reply:^
+    {
+        //sync call succeeded
+        syncSucceeded = YES;
+
+        //unblock caller now that daemon has saved
+        dispatch_semaphore_signal(semaphore);
+    }];
+
+    //wait for daemon to confirm save (5 second timeout)
+    if(0 != dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC)))
+    {
+        //err msg
+        logMsg(LOG_ERR, @"updatePreferencesSync: timed out waiting for daemon reply (5s)");
+    }
+
+    //sync call failed or timed out?
+    // fall back to fire-and-forget (daemon may be older and not have sync method)
+    // note: local cache was already saved above, so just try the XPC send directly
+    if(YES != syncSucceeded)
+    {
+        logMsg(LOG_DEBUG, @"updatePreferencesSync: falling back to async fire-and-forget XPC");
+
+        //try async fire-and-forget (call proxy directly to avoid double-caching)
+        [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+        {
+            logMsg(LOG_ERR, [NSString stringWithFormat:@"fallback updatePreferences also failed (error: %@)", proxyError]);
+        }] updatePreferences:preferences];
+
+        //brief pause to give async message time to be delivered
+        [NSThread sleepForTimeInterval:0.5];
+    }
 
     return;
 }

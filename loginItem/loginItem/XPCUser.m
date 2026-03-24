@@ -12,23 +12,21 @@
 #import "Logging.h"
 #import "XPCUser.h"
 #import "AppDelegate.h"
+#import <UserNotifications/UserNotifications.h>
+
+//notification identifier used to remove all DND alerts
+static NSString* const kDNDNotificationIdentifier = @"ca.tarapore.dnd.alert";
 
 @implementation XPCUser
 
 //show an alert
 -(void)alertShow:(NSDictionary*)alert
 {
-    //notification
-    NSUserNotification* notification = nil;
-    
     //formatter
     NSDateFormatter* dateFormat = nil;
     
     //dbg msg
     logMsg(LOG_DEBUG, @"XPC request from daemon: alert show");
-    
-    //alloc notification
-    notification = [[NSUserNotification alloc] init];
     
     //alloc formatter
     dateFormat = [[NSDateFormatter alloc] init];
@@ -36,26 +34,28 @@
     //set date format
     [dateFormat setDateFormat:@"MM/dd/yyyy HH:mm:ss"];
     
-    //set other button title
-    notification.otherButtonTitle = @"Dismiss";
-    
-    //remove action button
-    notification.hasActionButton = NO;
-    
-    //set title
-    notification.title = @"⚠️ Do Not Disturb Alert";
-    
-    //set subtitle
-    notification.subtitle = [NSString stringWithFormat:@"Lid Opened: %@", [dateFormat stringFromDate:alert[ALERT_TIMESTAMP]]];
-    
-    //set delegate to self
-    [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+    //build notification content
+    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+    content.title = @"Do Not Disturb Alert";
+    content.body = [NSString stringWithFormat:@"Lid Opened: %@", [dateFormat stringFromDate:alert[ALERT_TIMESTAMP]]];
+    content.sound = [UNNotificationSound defaultSound];
+
+    //use a fixed identifier so we can remove it via alertDismiss
+    UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:kDNDNotificationIdentifier
+                                                                          content:content
+                                                                          trigger:nil];
     
     //show alert on main thread
     dispatch_async(dispatch_get_main_queue(), ^{
-        
+
         //deliver notification
-        [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+        [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError* error)
+        {
+            if(nil != error)
+            {
+                logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to deliver notification: %@", error]);
+            }
+        }];
         
         //init/show touch bar
         [((AppDelegate*)[[NSApplication sharedApplication] delegate]) initTouchBar];
@@ -74,8 +74,8 @@
     //dismiss alerts on main thread
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        //clear (all) notification(s)
-        [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
+        //remove all delivered DND notifications
+        [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
         
         //set app delegate's touch bar to nil
         // will hide/unset the touch bar alert....
@@ -111,16 +111,16 @@
     return;
 }
 
-//'NSUserNotificationCenterDelegate' delegate method
-// tell system to always present (show) the alert to user
--(BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification
+//'UNUserNotificationCenterDelegate' method
+// always show the notification even when the app is in the foreground
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
-    return YES;
+    completionHandler(UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionSound);
 }
 
-//'NSUserNotificationCenterDelegate' delegate method
+//'UNUserNotificationCenterDelegate' method
 // handle notification click - open main app to events tab
--(void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
 {
     //path to main app
     NSString* mainAppPath = nil;
@@ -142,7 +142,9 @@
                                       completionHandler:nil];
 
     //dismiss the notification after handling click
-    [center removeDeliveredNotification:notification];
+    [[UNUserNotificationCenter currentNotificationCenter] removeDeliveredNotificationsWithIdentifiers:@[response.notification.request.identifier]];
+
+    completionHandler();
 }
 
 @end

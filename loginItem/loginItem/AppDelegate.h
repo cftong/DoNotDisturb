@@ -42,6 +42,9 @@
 //screen unlock observer
 @property(nonatomic, retain)id screenUnlockObserver;
 
+//notification delegate (must be retained - UNUserNotificationCenter.delegate is weak)
+@property(nonatomic, retain)id notificationDelegate;
+
 /* METHODS */
 
 //init/show touch bar

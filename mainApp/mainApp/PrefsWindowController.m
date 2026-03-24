@@ -37,6 +37,17 @@ static const void* kFilePathKey = &kFilePathKey;
 @synthesize eventsView;
 @synthesize eventsScrollView;
 @synthesize noEventsLabel;
+@synthesize ntfyView;
+@synthesize ntfyActionBtn;
+@synthesize ntfyServer;
+@synthesize ntfyTopic;
+@synthesize ntfyAuthType;
+@synthesize ntfyToken;
+@synthesize ntfyUsername;
+@synthesize ntfyPassword;
+@synthesize ntfyTokenLabel;
+@synthesize ntfyUsernameLabel;
+@synthesize ntfyPasswordLabel;
 
 //init 'general' view
 // add it, and make it selected
@@ -98,6 +109,7 @@ static const void* kFilePathKey = &kFilePathKey;
 
 //toolbar view handler
 // toggle view based on user selection
+// shows the view immediately, then fetches prefs from daemon in background
 -(IBAction)toolbarButtonHandler:(id)sender
 {
     //view
@@ -105,6 +117,9 @@ static const void* kFilePathKey = &kFilePathKey;
 
     //height of toolbar
     float toolbarHeight = 0.0f;
+
+    //current toolbar tag
+    NSInteger currentTag = ((NSToolbarItem*)sender).tag;
 
     //when we've prev added a view
     // remove the prev view cuz adding a new one
@@ -114,20 +129,86 @@ static const void* kFilePathKey = &kFilePathKey;
         [[[self.window.contentView subviews] lastObject] removeFromSuperview];
     }
 
-    //get (latest) prefs
-    self.preferences = [self.daemonComms getPreferences:nil];
-
     //get height of toolbar
     toolbarHeight = [self toolbarHeight];
 
-    //assign view
-    switch(((NSToolbarItem*)sender).tag)
+    //determine which view to show
+    switch(currentTag)
+    {
+        case TOOLBAR_GENERAL:
+            view = self.generalView;
+            break;
+
+        case TOOLBAR_ACTION:
+            view = self.actionView;
+            break;
+
+        case TOOLBAR_EVENTS:
+            view = self.eventsView;
+            //load events (local file system, not XPC — no blocking)
+            [self loadEvents];
+            break;
+
+        case TOOLBAR_UPDATE:
+            view = self.updateView;
+            break;
+
+        case TOOLBAR_NTFY:
+            //build view lazily
+            if(nil == self.ntfyView)
+            {
+                [self buildNtfyView];
+            }
+            view = self.ntfyView;
+            break;
+
+        default:
+            return;
+    }
+
+    //set frame rect
+    view.frame = CGRectMake(0, toolbarHeight, self.window.contentView.frame.size.width, self.window.contentView.frame.size.height-toolbarHeight);
+
+    //add to window (show immediately, prefs will be applied async)
+    [self.window.contentView addSubview:view];
+
+    //fetch preferences from daemon in background, then apply to UI
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        //get (latest) prefs from daemon (may block briefly if daemon is slow or unavailable)
+        NSDictionary* prefs = [self.daemonComms getPreferences:nil];
+
+        //failed?
+        if(nil == prefs)
+        {
+            logMsg(LOG_ERR, @"failed to get preferences from daemon — daemon may not be running");
+            return;
+        }
+
+        //apply prefs to UI on main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            //save
+            self.preferences = prefs;
+
+            //apply to current view
+            [self applyPreferencesToView:currentTag];
+        });
+    });
+
+    return;
+}
+
+//apply loaded preferences to the UI controls for the given toolbar tab
+// must be called on main thread
+-(void)applyPreferencesToView:(NSInteger)toolbarTag
+{
+    switch(toolbarTag)
     {
         //general
         case TOOLBAR_GENERAL:
         {
-            //set view
-            view = self.generalView;
+            NSView* view = self.generalView;
 
             //set 'passive mode' button state
             ((NSButton*)[view viewWithTag:BUTTON_PASSIVE_MODE]).state = [self.preferences[PREF_PASSIVE_MODE] boolValue];
@@ -153,8 +234,7 @@ static const void* kFilePathKey = &kFilePathKey;
         //action
         case TOOLBAR_ACTION:
         {
-            //set view
-            view = self.actionView;
+            NSView* view = self.actionView;
 
             //set 'execute action' button state
             ((NSButton*)[view viewWithTag:BUTTON_EXECUTE_ACTION]).state = [self.preferences[PREF_EXECUTE_ACTION] boolValue];
@@ -194,23 +274,10 @@ static const void* kFilePathKey = &kFilePathKey;
             break;
         }
 
-        //events
-        case TOOLBAR_EVENTS:
-        {
-            //set view
-            view = self.eventsView;
-
-            //load events
-            [self loadEvents];
-
-            break;
-        }
-
         //update
         case TOOLBAR_UPDATE:
         {
-            //set view
-            view = self.updateView;
+            NSView* view = self.updateView;
 
             //set 'no update' button state
             ((NSButton*)[view viewWithTag:BUTTON_NO_UPDATES_MODE]).state = [self.preferences[PREF_NO_UPDATES_MODE] boolValue];
@@ -218,17 +285,62 @@ static const void* kFilePathKey = &kFilePathKey;
             break;
         }
 
+        //ntfy
+        case TOOLBAR_NTFY:
+        {
+            //set 'ntfy action' checkbox state
+            self.ntfyActionBtn.state = [self.preferences[PREF_NTFY_ACTION] boolValue];
+
+            //set server field
+            if(0 != [self.preferences[PREF_NTFY_SERVER] length])
+            {
+                self.ntfyServer.stringValue = self.preferences[PREF_NTFY_SERVER];
+            }
+
+            //set topic field
+            if(0 != [self.preferences[PREF_NTFY_TOPIC] length])
+            {
+                self.ntfyTopic.stringValue = self.preferences[PREF_NTFY_TOPIC];
+            }
+
+            //set auth type popup
+            NSInteger authType = [self.preferences[PREF_NTFY_AUTH_TYPE] integerValue];
+            [self.ntfyAuthType selectItemAtIndex:authType];
+            [self updateNtfyAuthFields:authType];
+
+            //set token field
+            if(0 != [self.preferences[PREF_NTFY_TOKEN] length])
+            {
+                self.ntfyToken.stringValue = self.preferences[PREF_NTFY_TOKEN];
+            }
+
+            //set username field
+            if(0 != [self.preferences[PREF_NTFY_USERNAME] length])
+            {
+                self.ntfyUsername.stringValue = self.preferences[PREF_NTFY_USERNAME];
+            }
+
+            //set password field
+            if(0 != [self.preferences[PREF_NTFY_PASSWORD] length])
+            {
+                self.ntfyPassword.stringValue = self.preferences[PREF_NTFY_PASSWORD];
+            }
+
+            //enable/disable server, topic, and auth popup based on checkbox state
+            BOOL ntfyEnabled = [self.preferences[PREF_NTFY_ACTION] boolValue];
+            self.ntfyServer.enabled = ntfyEnabled;
+            self.ntfyTopic.enabled = ntfyEnabled;
+            self.ntfyAuthType.enabled = ntfyEnabled;
+
+            //enable/disable auth-specific fields and sync label colors
+            [self updateNtfyAuthFields:authType];
+
+            break;
+        }
+
         default:
-            return;
+            break;
     }
-
-    //set frame rect
-    view.frame = CGRectMake(0, toolbarHeight, self.window.contentView.frame.size.width, self.window.contentView.frame.size.height-toolbarHeight);
-
-    //add to window
-    [self.window.contentView addSubview:view];
-
-    return;
 }
 
 //invoked when user toggles button
@@ -378,67 +490,175 @@ static const void* kFilePathKey = &kFilePathKey;
 
             break;
         }
+
+        //ntfy action
+        // also toggle state of all ntfy fields
+        case BUTTON_NTFY_ACTION:
+        {
+            //set pref
+            preferences[PREF_NTFY_ACTION] = state;
+
+            //enable/disable server, topic, and auth popup directly
+            BOOL ntfyEnabled = state.boolValue;
+            self.ntfyServer.enabled = ntfyEnabled;
+            self.ntfyTopic.enabled = ntfyEnabled;
+            self.ntfyAuthType.enabled = ntfyEnabled;
+
+            //delegate auth-specific field enable/colors to shared helper
+            // reads ntfyActionBtn.state which was already updated by the button toggle
+            [self updateNtfyAuthFields:[self.ntfyAuthType indexOfSelectedItem]];
+
+            break;
+        }
     }
 
-    //tell daemon to update preferences
-    [daemonComms updatePreferences:preferences];
+    //capture sender tag before going off main thread
+    NSInteger senderTag = ((NSButton*)sender).tag;
 
-    //restart login item if user toggle'd icon state
-    // note: this has to be done after the prefs are written out by the daemon
-    if(BUTTON_NO_ICON_MODE == ((NSButton*)sender).tag)
-    {
-        //restart login item
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-        ^{
+    //send preference update to daemon in background (avoids blocking main thread)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        //dbg msg
+        logMsg(LOG_DEBUG, [NSString stringWithFormat:@"sending preference update to daemon: %@", preferences]);
+
+        //tell daemon to update preferences
+        [daemonComms updatePreferencesSync:preferences];
+
+        //dbg msg
+        logMsg(LOG_DEBUG, @"preference update sent to daemon (sync call returned)");
+
+        //restart login item if user toggle'd icon state
+        // note: this has to be done after the prefs are written out by the daemon
+        if(BUTTON_NO_ICON_MODE == senderTag)
+        {
             //restart
             [((AppDelegate*)[[NSApplication sharedApplication] delegate]) startLoginItem:YES];
+        }
+    });
+
+    return;
+}
+
+//automatically called when 'enter' is hit or field loses focus
+// save values that were entered in text field
+// sends async to avoid blocking main thread; windowWillClose: does a final sync save
+-(void)controlTextDidEndEditing:(NSNotification *)notification
+{
+    //prefs to save
+    NSDictionary* prefs = nil;
+
+    //execute path?
+    if([notification object] == self.executePath)
+    {
+        prefs = @{PREF_EXECUTE_PATH:self.executePath.stringValue, PREF_EXECUTE_USER:getConsoleUser()};
+    }
+
+    //email address?
+    else if([notification object] == self.emailAddress)
+    {
+        prefs = @{PREF_EMAIL_ADDRESS:self.emailAddress.stringValue};
+    }
+
+    //ntfy server?
+    else if([notification object] == self.ntfyServer)
+    {
+        prefs = @{PREF_NTFY_SERVER:self.ntfyServer.stringValue};
+    }
+
+    //ntfy topic?
+    else if([notification object] == self.ntfyTopic)
+    {
+        prefs = @{PREF_NTFY_TOPIC:self.ntfyTopic.stringValue};
+    }
+
+    //ntfy token?
+    else if([notification object] == self.ntfyToken)
+    {
+        prefs = @{PREF_NTFY_TOKEN:self.ntfyToken.stringValue};
+    }
+
+    //ntfy username?
+    else if([notification object] == self.ntfyUsername)
+    {
+        prefs = @{PREF_NTFY_USERNAME:self.ntfyUsername.stringValue};
+    }
+
+    //ntfy password?
+    else if([notification object] == self.ntfyPassword)
+    {
+        prefs = @{PREF_NTFY_PASSWORD:self.ntfyPassword.stringValue};
+    }
+
+    //send to daemon in background if we have something to save
+    if(nil != prefs)
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self.daemonComms updatePreferences:prefs];
         });
     }
 
     return;
 }
 
-//automatically called when 'enter' is hit
-// save values that were entered in text field
--(void)controlTextDidEndEditing:(NSNotification *)notification
-{
-    //execute path?
-    if([notification object] == self.executePath)
-    {
-        //send to daemon
-        // will update preferences
-        [self.daemonComms updatePreferences:@{PREF_EXECUTE_PATH:self.executePath.stringValue, PREF_EXECUTE_USER:getConsoleUser()}];
-    }
-
-    //email address?
-    else if([notification object] == self.emailAddress)
-    {
-        //send to daemon
-        [self.daemonComms updatePreferences:@{PREF_EMAIL_ADDRESS:self.emailAddress.stringValue}];
-    }
-
-    return;
-}
-
 //the 'controlTextDidEndEditing' notification might not fire
-// so always capture/save the all values from text fields here...
+// if a text field is first responder when the window closes;
+// force end editing first so delegate fires, then batch-save all field values
 -(void)windowWillClose:(NSNotification *)notification
 {
     //prefs to save
     NSMutableDictionary* prefs = nil;
 
-    //init
-    prefs = [NSMutableDictionary dictionaryWithDictionary:@{PREF_EXECUTE_PATH:self.executePath.stringValue, PREF_EXECUTE_USER:getConsoleUser()}];
+    //force any active text field to commit its value
+    // this triggers controlTextDidEndEditing: for the active field synchronously
+    [self.window endEditingFor:nil];
 
-    //add email address if field exists
-    if(nil != self.emailAddress)
+    //init with execute path fields (always present via IBOutlet)
+    // guard against nil/empty to avoid overwriting a previously saved path with ""
+    prefs = [NSMutableDictionary dictionary];
+    if(nil != self.executePath && 0 != self.executePath.stringValue.length)
+    {
+        prefs[PREF_EXECUTE_PATH] = self.executePath.stringValue;
+        prefs[PREF_EXECUTE_USER] = getConsoleUser();
+    }
+
+    //add email address if non-empty
+    if(nil != self.emailAddress && 0 != self.emailAddress.stringValue.length)
     {
         prefs[PREF_EMAIL_ADDRESS] = self.emailAddress.stringValue;
     }
 
-    //send to daemon
-    // will update preferences
-    [self.daemonComms updatePreferences:prefs];
+    //add ntfy fields only if the ntfy view was built and the value is non-empty
+    // (guards against overwriting saved prefs when the tab was never visited)
+    if(nil != self.ntfyServer && 0 != self.ntfyServer.stringValue.length)
+    {
+        prefs[PREF_NTFY_SERVER] = self.ntfyServer.stringValue;
+    }
+    if(nil != self.ntfyTopic && 0 != self.ntfyTopic.stringValue.length)
+    {
+        prefs[PREF_NTFY_TOPIC] = self.ntfyTopic.stringValue;
+    }
+    if(nil != self.ntfyToken && 0 != self.ntfyToken.stringValue.length)
+    {
+        prefs[PREF_NTFY_TOKEN] = self.ntfyToken.stringValue;
+    }
+    if(nil != self.ntfyUsername && 0 != self.ntfyUsername.stringValue.length)
+    {
+        prefs[PREF_NTFY_USERNAME] = self.ntfyUsername.stringValue;
+    }
+    if(nil != self.ntfyPassword && 0 != self.ntfyPassword.stringValue.length)
+    {
+        prefs[PREF_NTFY_PASSWORD] = self.ntfyPassword.stringValue;
+    }
+
+    //save prefs (only if there's something to save)
+    // cachePreferencesLocally: inside updatePreferences: writes to NSUserDefaults
+    // immediately, so prefs survive even if the app exits before the XPC completes.
+    // Use fire-and-forget to avoid blocking the main thread (which causes a rainbow
+    // ball when the daemon is dead and the sync timeout is hit)
+    if(0 != prefs.count)
+    {
+        [self.daemonComms updatePreferences:prefs];
+    }
 
     return;
 }
@@ -748,6 +968,151 @@ static const void* kFilePathKey = &kFilePathKey;
     return;
 }
 
+
+//build the ntfy settings view programmatically
+-(void)buildNtfyView
+{
+    //view frame matches other tab views (width will be adjusted by toolbarButtonHandler)
+    self.ntfyView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 500, 300)];
+
+    //current y position (top-down layout, using flipped-style math)
+    CGFloat y = 260;
+    CGFloat labelWidth = 110;
+    CGFloat fieldX = 130;
+    CGFloat fieldWidth = 310;
+    CGFloat rowH = 26;
+    CGFloat rowGap = 8;
+
+    //helper block: make a right-aligned label
+    NSTextField* (^makeLabel)(NSString*, CGFloat) = ^NSTextField*(NSString* text, CGFloat yPos)
+    {
+        NSTextField* lbl = [[NSTextField alloc] initWithFrame:NSMakeRect(10, yPos, labelWidth, rowH)];
+        lbl.stringValue = text;
+        lbl.alignment = NSTextAlignmentRight;
+        lbl.editable = NO;
+        lbl.bordered = NO;
+        lbl.drawsBackground = NO;
+        lbl.font = [NSFont systemFontOfSize:13.0];
+        return lbl;
+    };
+
+    //helper block: make a text field
+    NSTextField* (^makeField)(CGFloat, BOOL) = ^NSTextField*(CGFloat yPos, BOOL secure)
+    {
+        NSTextField* fld;
+        if(secure)
+        {
+            fld = [[NSSecureTextField alloc] initWithFrame:NSMakeRect(fieldX, yPos, fieldWidth, rowH)];
+        }
+        else
+        {
+            fld = [[NSTextField alloc] initWithFrame:NSMakeRect(fieldX, yPos, fieldWidth, rowH)];
+        }
+        fld.delegate = self;
+        fld.font = [NSFont systemFontOfSize:13.0];
+        return fld;
+    };
+
+    // --- Enable ntfy checkbox ---
+    self.ntfyActionBtn = [[NSButton alloc] initWithFrame:NSMakeRect(fieldX, y, fieldWidth, rowH)];
+    [self.ntfyActionBtn setButtonType:NSButtonTypeSwitch];
+    self.ntfyActionBtn.title = @"Enable ntfy notifications";
+    self.ntfyActionBtn.tag = BUTTON_NTFY_ACTION;
+    self.ntfyActionBtn.font = [NSFont systemFontOfSize:13.0];
+    [self.ntfyActionBtn setAction:@selector(togglePreference:)];
+    [self.ntfyActionBtn setTarget:self];
+    [self.ntfyView addSubview:self.ntfyActionBtn];
+
+    y -= rowH + rowGap + 4;
+
+    // --- Server ---
+    [self.ntfyView addSubview:makeLabel(@"Server:", y)];
+    self.ntfyServer = makeField(y, NO);
+    self.ntfyServer.placeholderString = @"https://ntfy.sh";
+    [self.ntfyView addSubview:self.ntfyServer];
+
+    y -= rowH + rowGap;
+
+    // --- Topic ---
+    [self.ntfyView addSubview:makeLabel(@"Topic:", y)];
+    self.ntfyTopic = makeField(y, NO);
+    self.ntfyTopic.placeholderString = @"my-dnd-alerts";
+    [self.ntfyView addSubview:self.ntfyTopic];
+
+    y -= rowH + rowGap + 4;
+
+    // --- Auth Type ---
+    [self.ntfyView addSubview:makeLabel(@"Auth:", y)];
+    self.ntfyAuthType = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(fieldX, y, 180, rowH) pullsDown:NO];
+    [self.ntfyAuthType addItemsWithTitles:@[@"None", @"Token", @"Username / Password"]];
+    self.ntfyAuthType.font = [NSFont systemFontOfSize:13.0];
+    [self.ntfyAuthType setAction:@selector(ntfyAuthTypeChanged:)];
+    [self.ntfyAuthType setTarget:self];
+    [self.ntfyView addSubview:self.ntfyAuthType];
+
+    y -= rowH + rowGap;
+
+    // --- Token ---
+    self.ntfyTokenLabel = makeLabel(@"Token:", y);
+    [self.ntfyView addSubview:self.ntfyTokenLabel];
+    self.ntfyToken = makeField(y, NO);
+    self.ntfyToken.placeholderString = @"tk_...";
+    [self.ntfyView addSubview:self.ntfyToken];
+
+    y -= rowH + rowGap;
+
+    // --- Username ---
+    self.ntfyUsernameLabel = makeLabel(@"Username:", y);
+    [self.ntfyView addSubview:self.ntfyUsernameLabel];
+    self.ntfyUsername = makeField(y, NO);
+    self.ntfyUsername.placeholderString = @"username";
+    [self.ntfyView addSubview:self.ntfyUsername];
+
+    y -= rowH + rowGap;
+
+    // --- Password ---
+    self.ntfyPasswordLabel = makeLabel(@"Password:", y);
+    [self.ntfyView addSubview:self.ntfyPasswordLabel];
+    self.ntfyPassword = (NSSecureTextField*)makeField(y, YES);
+    self.ntfyPassword.placeholderString = @"password";
+    [self.ntfyView addSubview:self.ntfyPassword];
+
+    return;
+}
+
+//update visibility/state of auth-specific fields based on selected auth type
+-(void)updateNtfyAuthFields:(NSInteger)authType
+{
+    BOOL ntfyEnabled = self.ntfyActionBtn.state == NSControlStateValueOn;
+
+    //token fields visible only for token auth
+    self.ntfyToken.enabled = ntfyEnabled && (authType == NTFY_AUTH_TOKEN);
+    self.ntfyTokenLabel.textColor = (ntfyEnabled && authType == NTFY_AUTH_TOKEN) ? [NSColor labelColor] : [NSColor disabledControlTextColor];
+
+    //basic auth fields visible only for basic auth
+    self.ntfyUsername.enabled = ntfyEnabled && (authType == NTFY_AUTH_BASIC);
+    self.ntfyPassword.enabled = ntfyEnabled && (authType == NTFY_AUTH_BASIC);
+    self.ntfyUsernameLabel.textColor = (ntfyEnabled && authType == NTFY_AUTH_BASIC) ? [NSColor labelColor] : [NSColor disabledControlTextColor];
+    self.ntfyPasswordLabel.textColor = (ntfyEnabled && authType == NTFY_AUTH_BASIC) ? [NSColor labelColor] : [NSColor disabledControlTextColor];
+
+    return;
+}
+
+//handle ntfy auth type popup change
+-(IBAction)ntfyAuthTypeChanged:(id)sender
+{
+    NSInteger authType = [self.ntfyAuthType indexOfSelectedItem];
+
+    //update field states
+    [self updateNtfyAuthFields:authType];
+
+    //save pref in background (windowWillClose: does a final sync save before exit)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.daemonComms updatePreferences:@{PREF_NTFY_AUTH_TYPE:@(authType)}];
+    });
+
+    return;
+}
 
 //get height of toolbar
 // based on: https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Toolbars/Tasks/DeterminingOverflow.html#//apple_ref/doc/uid/20000859-SW2

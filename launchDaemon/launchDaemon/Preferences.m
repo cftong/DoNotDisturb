@@ -263,8 +263,50 @@ bail:
 //save to disk
 -(BOOL)save
 {
-    //save
-    return [self.preferences writeToFile:[INSTALL_DIRECTORY stringByAppendingPathComponent:PREFS_FILE] atomically:YES];
+    //file path
+    NSString* prefsPath = nil;
+
+    //serialized data
+    NSData* plistData = nil;
+
+    //error
+    NSError* error = nil;
+
+    //file manager
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+
+    //ensure the install directory exists (daemon runs as root, so this will succeed)
+    if(YES != [fileManager fileExistsAtPath:INSTALL_DIRECTORY])
+    {
+        if(YES != [fileManager createDirectoryAtPath:INSTALL_DIRECTORY withIntermediateDirectories:YES attributes:nil error:&error])
+        {
+            logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to create preferences directory %@: %@", INSTALL_DIRECTORY, error]);
+            return NO;
+        }
+    }
+
+    //build path
+    prefsPath = [INSTALL_DIRECTORY stringByAppendingPathComponent:PREFS_FILE];
+
+    //serialize preferences to plist data (XML format for readability)
+    plistData = [NSPropertyListSerialization dataWithPropertyList:self.preferences format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+    if(nil == plistData)
+    {
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to serialize preferences: %@", error]);
+        return NO;
+    }
+
+    //write atomically
+    if(YES != [plistData writeToFile:prefsPath options:NSDataWritingAtomic error:&error])
+    {
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to write preferences to %@: %@", prefsPath, error]);
+        return NO;
+    }
+
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"saved preferences to %@", prefsPath]);
+
+    return YES;
 }
 
 //for pretty print

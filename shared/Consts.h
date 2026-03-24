@@ -35,10 +35,22 @@
 #define INSTALLER_ID @"ca.tarapore.dnd.installer"
 
 //signing auth
-#define SIGNING_AUTH @"Developer ID Application: Dharmesh Tarapore (7KGHU7S762)"
+// Value comes from SIGNING_IDENTITY_STR, which is set by Shared.xcconfig via GCC_PREPROCESSOR_DEFINITIONS.
+// To change it, edit SIGNING_IDENTITY in Shared.xcconfig at the repo root.
+#ifdef SIGNING_IDENTITY_STR
+#define SIGNING_AUTH @SIGNING_IDENTITY_STR
+#else
+#define SIGNING_AUTH @"Apple Development: p.ling1991@protonmail.com (6PQ36S65VA)"
+#endif
 
 //team identifier (works for both Apple Development and Developer ID certs)
-#define SIGNING_TEAM_ID @"7KGHU7S762"
+// Value comes from TEAM_ID_STR, which is set by Shared.xcconfig via GCC_PREPROCESSOR_DEFINITIONS.
+// To change it, edit TEAM_ID in Shared.xcconfig at the repo root.
+#ifdef TEAM_ID_STR
+#define SIGNING_TEAM_ID @TEAM_ID_STR
+#else
+#define SIGNING_TEAM_ID @"L858T78JKU"
+#endif
 
 //sentry crash reporting URL
 #define CRASH_REPORTING_URL @"https://b6e82fd3037642edbc63b1ded9be53d3:87738f112d454de5a89a9864aae73b23@sentry.io/289135"
@@ -214,6 +226,39 @@
 //prefs
 // update mode
 #define PREF_NO_UPDATES_MODE @"noUpdatesMode"
+
+//pref
+// ntfy notification action
+#define PREF_NTFY_ACTION @"ntfyAction"
+
+//pref
+// ntfy server URL (e.g. https://ntfy.sh)
+#define PREF_NTFY_SERVER @"ntfyServer"
+
+//pref
+// ntfy topic
+#define PREF_NTFY_TOPIC @"ntfyTopic"
+
+//pref
+// ntfy auth type: 0 = none, 1 = token, 2 = username/password
+#define PREF_NTFY_AUTH_TYPE @"ntfyAuthType"
+
+//pref
+// ntfy token (for token auth)
+#define PREF_NTFY_TOKEN @"ntfyToken"
+
+//pref
+// ntfy username (for basic auth)
+#define PREF_NTFY_USERNAME @"ntfyUsername"
+
+//pref
+// ntfy password (for basic auth)
+#define PREF_NTFY_PASSWORD @"ntfyPassword"
+
+//ntfy auth type values
+#define NTFY_AUTH_NONE 0
+#define NTFY_AUTH_TOKEN 1
+#define NTFY_AUTH_BASIC 2
 
 //log file
 #define LOG_FILE_NAME @"DND.log"

@@ -26,6 +26,7 @@
 		CD256E082050DE9B00768457 /* UserAuthMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = CD256DED2050DE4B00768457 /* UserAuthMonitor.m */; };
 		CDD3ADF3213527F1004F805F /* Do Not Disturb in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7D7755D01F02DF9500D0017D /* Do Not Disturb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CE60F9C91FC9BBE500EFFDDA /* Lid.m in Sources */ = {isa = PBXBuildFile; fileRef = CE60F9C81FC9BBE500EFFDDA /* Lid.m */; };
+		E983A9DB2F72E47600D938C0 /* ca.tarapore.dnd.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7D2582591F1A872400D28B95 /* ca.tarapore.dnd.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,25 @@
 			dstSubfolderSpec = 6;
 			files = (
 				CDD3ADF3213527F1004F805F /* Do Not Disturb in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E949D9BF2F72E7620052EEFC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E983A9DA2F72E45200D938C0 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				E983A9DB2F72E47600D938C0 /* ca.tarapore.dnd.plist in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +263,7 @@
 				20637258203DC70A006D4C38 /* Frameworks */,
 				20C8722C2046079F00F1275D /* Copy Frameworks */,
 				CDD3ADF2213527E0004F805F /* CopyFiles */,
+				E983A9DA2F72E45200D938C0 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -260,6 +281,7 @@
 			buildPhases = (
 				7D7755CC1F02DF9500D0017D /* Sources */,
 				7D7755CD1F02DF9500D0017D /* Frameworks */,
+				E949D9BF2F72E7620052EEFC /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -353,7 +375,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -363,7 +385,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd;
 				PRODUCT_NAME = "Do Not Disturb";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -378,7 +400,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -388,7 +410,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd;
 				PRODUCT_NAME = "Do Not Disturb";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
@@ -502,7 +524,7 @@
 				CODE_SIGN_ENTITLEMENTS = launchDaemon/launchDaemon.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -518,7 +540,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd;
 				PRODUCT_NAME = "Do Not Disturb";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 			};
 			name = Debug;
 		};
@@ -528,7 +550,7 @@
 				CODE_SIGN_ENTITLEMENTS = launchDaemon/launchDaemon.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -545,7 +567,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ca.tarapore.dnd;
 				PRODUCT_NAME = "Do Not Disturb";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 			};
 			name = Release;
 		};

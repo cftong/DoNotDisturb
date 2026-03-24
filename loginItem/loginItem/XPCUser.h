@@ -8,12 +8,13 @@
 //
 
 @import Foundation;
+@import UserNotifications;
 
 #import "XPCUserProto.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XPCUser : NSObject <XPCUserProtocol, NSUserNotificationCenterDelegate>
+@interface XPCUser : NSObject <XPCUserProtocol, UNUserNotificationCenterDelegate>
 {
 
 }

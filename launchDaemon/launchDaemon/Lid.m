@@ -698,6 +698,93 @@ bail:
         }
     }
 
+    //send ntfy notification?
+    if( (YES == [currentPrefs[PREF_NTFY_ACTION] boolValue]) &&
+        (0 != [currentPrefs[PREF_NTFY_TOPIC] length]) )
+    {
+        //ntfy server (default to ntfy.sh if not set)
+        NSString* ntfyServer = currentPrefs[PREF_NTFY_SERVER];
+        if(0 == [ntfyServer length])
+        {
+            ntfyServer = @"https://ntfy.sh";
+        }
+
+        //strip trailing slash
+        if([ntfyServer hasSuffix:@"/"])
+        {
+            ntfyServer = [ntfyServer substringToIndex:ntfyServer.length - 1];
+        }
+
+        //ntfy topic
+        NSString* ntfyTopic = currentPrefs[PREF_NTFY_TOPIC];
+
+        //build URL string
+        NSString* ntfyURLStr = [NSString stringWithFormat:@"%@/%@", ntfyServer, ntfyTopic];
+
+        //determine event description
+        NSString* ntfyEventDesc = ([eventType isEqualToString:@"usb"]) ? @"USB Insertion" : @"Lid Open";
+
+        //date formatter
+        NSDateFormatter* ntfyFormatter = [[NSDateFormatter alloc] init];
+        [ntfyFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+        //build message body
+        NSString* ntfyMessage = [NSString stringWithFormat:@"Timestamp: %@\nHostname: %@\nUser: %@\nEvent: %@",
+                                 [ntfyFormatter stringFromDate:timestamp],
+                                 [[NSHost currentHost] localizedName],
+                                 user ?: USER_UNKNOWN,
+                                 ntfyEventDesc];
+
+        //build curl command arguments
+        NSMutableArray* curlArgs = [NSMutableArray arrayWithObjects:
+            @"-s", @"-o", @"/dev/null",
+            @"-X", @"POST",
+            ntfyURLStr,
+            @"-H", [NSString stringWithFormat:@"Title: DND Alert: %@", ntfyEventDesc],
+            @"-H", @"Priority: high",
+            @"-H", @"Tags: warning",
+            @"-d", ntfyMessage,
+            nil];
+
+        //auth type
+        NSInteger ntfyAuthType = [currentPrefs[PREF_NTFY_AUTH_TYPE] integerValue];
+
+        //token auth?
+        if(NTFY_AUTH_TOKEN == ntfyAuthType && 0 != [currentPrefs[PREF_NTFY_TOKEN] length])
+        {
+            [curlArgs addObject:@"-H"];
+            [curlArgs addObject:[NSString stringWithFormat:@"Authorization: Bearer %@", currentPrefs[PREF_NTFY_TOKEN]]];
+        }
+        //basic auth?
+        else if(NTFY_AUTH_BASIC == ntfyAuthType &&
+                0 != [currentPrefs[PREF_NTFY_USERNAME] length] &&
+                0 != [currentPrefs[PREF_NTFY_PASSWORD] length])
+        {
+            [curlArgs addObject:@"-u"];
+            [curlArgs addObject:[NSString stringWithFormat:@"%@:%@",
+                                 currentPrefs[PREF_NTFY_USERNAME],
+                                 currentPrefs[PREF_NTFY_PASSWORD]]];
+        }
+
+        //dbg msg
+        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"sending ntfy notification to %@", ntfyURLStr]);
+
+        //send notification via curl
+        NSDictionary* ntfyResults = execTask(@"/usr/bin/curl", curlArgs, YES);
+
+        //check result
+        if(nil != ntfyResults[EXIT_CODE] && 0 == [ntfyResults[EXIT_CODE] intValue])
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"sent ntfy notification to %@", ntfyURLStr]);
+        }
+        else
+        {
+            //err msg
+            logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to send ntfy notification to %@: %@", ntfyURLStr, ntfyResults]);
+        }
+    }
+
     //send email notification?
     if( (YES == [currentPrefs[PREF_EMAIL_ACTION] boolValue]) &&
         (0 != [currentPrefs[PREF_EMAIL_ADDRESS] length]) )

@@ -1,0 +1,17 @@
+// Shared.xcconfig
+// Project-wide signing configuration.
+// Edit TEAM_ID and SIGNING_IDENTITY to match your Apple Developer account.
+
+// Your Apple Developer Team ID (10-character string from developer.apple.com)
+TEAM_ID = L858T78JKU
+
+// The exact certificate name shown in Keychain Access / `security find-identity`
+SIGNING_IDENTITY = Apple Development: p.ling1991@protonmail.com (6PQ36S65VA)
+
+// Standard Xcode settings — driven from TEAM_ID above
+DEVELOPMENT_TEAM = $(TEAM_ID)
+CODE_SIGN_IDENTITY = $(SIGNING_IDENTITY)
+
+// Expose TEAM_ID to the C preprocessor so Consts.h can use it
+// Note: the string value must be wrapped in quotes for use as an NSString literal
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) TEAM_ID_STR="\"$(TEAM_ID)\"" SIGNING_IDENTITY_STR="\"$(SIGNING_IDENTITY)\""

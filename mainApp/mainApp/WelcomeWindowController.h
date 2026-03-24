@@ -18,30 +18,6 @@
 //welcome view
 @property (strong) IBOutlet NSView *welcomeView;
 
-//app info view
-@property (strong) IBOutlet NSView *appInfo;
-
-//config view
-@property (strong) IBOutlet NSView *qrcView;
-
-//activity indicator
-@property (weak) IBOutlet NSProgressIndicator *activityIndicator;
-
-//activity msg
-@property (weak) IBOutlet NSTextField *activityMessage;
-
-//qrc image view
-@property (weak) IBOutlet NSImageView *qrcImageView;
-
-//linked view
-@property (strong) IBOutlet NSView *linkedView;
-
-//host name
-@property (weak) IBOutlet NSTextField *hostName;
-
-//(registered) device name
-@property (weak) IBOutlet NSTextField *deviceName;
-
 //welcome view controller
 @property(nonatomic, retain)NSViewController* welcomeViewController;
 

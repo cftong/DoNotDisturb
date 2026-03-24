@@ -14,6 +14,34 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7D7755CF1F02DF9500D0017D"
+               BuildableName = "Do Not Disturb"
+               BlueprintName = "launchDaemon"
+               ReferencedContainer = "container:../launchDaemon/launchDaemon.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2063725A203DC70A006D4C38"
+               BuildableName = "Do Not Disturb.bundle"
+               BlueprintName = "launchDaemonBundle"
+               ReferencedContainer = "container:../launchDaemon/launchDaemon.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "7D7755E21F02E05B00D0017D"
                BuildableName = "Do Not Disturb Helper.app"
                BlueprintName = "loginItem"

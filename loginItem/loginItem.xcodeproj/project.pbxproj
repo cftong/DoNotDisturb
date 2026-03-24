@@ -95,6 +95,7 @@
 		CDFB7887206E2F3400ABDD04 /* statusIconWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "statusIconWhite@2x.png"; sourceTree = "<group>"; };
 		CE968A9A1FCC590200AD6B78 /* statusIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = statusIcon.png; sourceTree = "<group>"; };
 		CE968A9B1FCC590200AD6B78 /* statusIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "statusIcon@2x.png"; sourceTree = "<group>"; };
+		4D02A8DC755E69B22F07FE62 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Shared.xcconfig"; path = "../../Shared.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -452,7 +453,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -478,7 +479,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;

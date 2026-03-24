@@ -131,6 +131,26 @@ BOOL initLogging()
         goto bail;
     }
     
+    //ensure parent directory exists
+    // note: only the daemon (running as root) can create /Library/Objective-See/DND/
+    // the mainApp/loginItem will fail here (harmless — they don't call initLogging)
+    {
+        NSString* logDir = [logPath stringByDeletingLastPathComponent];
+        BOOL isDir = NO;
+        if(YES != [[NSFileManager defaultManager] fileExistsAtPath:logDir isDirectory:&isDir] || YES != isDir)
+        {
+            NSError* dirError = nil;
+            if(YES != [[NSFileManager defaultManager] createDirectoryAtPath:logDir withIntermediateDirectories:YES attributes:nil error:&dirError])
+            {
+                //err msg
+                logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to create log directory %@: %@", logDir, dirError]);
+
+                //bail
+                goto bail;
+            }
+        }
+    }
+
     //first time
     // create log file
     if(YES != [[NSFileManager defaultManager] fileExistsAtPath:logPath])

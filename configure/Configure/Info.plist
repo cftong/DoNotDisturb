@@ -27,7 +27,7 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>ca.tarapore.dnd.installer.helper</key>
-		<string>anchor apple generic and identifier &quot;ca.tarapore.dnd.installer.helper&quot; and certificate leaf[subject.OU] = &quot;7KGHU7S762&quot;</string>
+		<string>anchor apple generic and identifier &quot;ca.tarapore.dnd.installer.helper&quot; and certificate leaf[subject.OU] = &quot;L858T78JKU&quot;</string>
 	</dict>
 </dict>
 </plist>

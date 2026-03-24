@@ -8,14 +8,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="WelcomeWindowController">
             <connections>
-                <outlet property="activityIndicator" destination="12Q-wb-usj" id="OBk-O9-kxj"/>
-                <outlet property="activityMessage" destination="fFv-Gr-YPE" id="ItR-ES-c5V"/>
-                <outlet property="appInfo" destination="Saf-Qg-NBo" id="xs0-qj-7dm"/>
-                <outlet property="deviceName" destination="cwA-Cr-acf" id="2Iv-JH-zGS"/>
-                <outlet property="hostName" destination="mFe-eu-nNm" id="oRs-cQ-NN6"/>
-                <outlet property="linkedView" destination="Bbb-NZ-tuF" id="vGv-tV-8Mb"/>
-                <outlet property="qrcImageView" destination="mos-zb-KRK" id="kKD-Ww-Bkx"/>
-                <outlet property="qrcView" destination="klO-RE-i9P" id="30O-Tc-jSC"/>
                 <outlet property="welcomeView" destination="vZ0-Uk-9P1" id="JgS-86-4S1"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -182,9 +174,7 @@
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
-                    <connections>
-                        <action selector="downloadApp:" target="-2" id="IrW-7u-1OG"/>
-                    </connections>
+
                 </button>
             </subviews>
             <point key="canvasLocation" x="775" y="647"/>

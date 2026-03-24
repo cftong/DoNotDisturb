@@ -26,11 +26,17 @@
 //update view
 #define TOOLBAR_UPDATE 3
 
+//ntfy view
+#define TOOLBAR_NTFY 4
+
 //tool bar id for 'general'
 #define TOOLBAR_GENERAL_ID @"general"
 
 //tool bar id for 'events'
 #define TOOLBAR_EVENTS_ID @"events"
+
+//tool bar id for 'ntfy'
+#define TOOLBAR_NTFY_ID @"ntfy"
 
 //passive mode button
 #define BUTTON_PASSIVE_MODE 1
@@ -68,6 +74,9 @@
 //Apple Watch mode button
 #define BUTTON_APPLEWATCH_MODE 12
 
+//ntfy action button
+#define BUTTON_NTFY_ACTION 13
+
 @interface PrefsWindowController : NSWindowController <NSTextFieldDelegate, NSToolbarDelegate>
 
 /* PROPERTIES */
@@ -98,6 +107,41 @@
 
 //email address field
 @property (weak) IBOutlet NSTextField *emailAddress;
+
+/* NTFY VIEW */
+
+//ntfy view (built programmatically)
+@property (strong, nonatomic) NSView *ntfyView;
+
+//ntfy action checkbox
+@property (strong, nonatomic) NSButton *ntfyActionBtn;
+
+//ntfy server field
+@property (strong, nonatomic) NSTextField *ntfyServer;
+
+//ntfy topic field
+@property (strong, nonatomic) NSTextField *ntfyTopic;
+
+//ntfy auth type popup
+@property (strong, nonatomic) NSPopUpButton *ntfyAuthType;
+
+//ntfy token field
+@property (strong, nonatomic) NSTextField *ntfyToken;
+
+//ntfy username field
+@property (strong, nonatomic) NSTextField *ntfyUsername;
+
+//ntfy password field
+@property (strong, nonatomic) NSSecureTextField *ntfyPassword;
+
+//ntfy token label
+@property (strong, nonatomic) NSTextField *ntfyTokenLabel;
+
+//ntfy username label
+@property (strong, nonatomic) NSTextField *ntfyUsernameLabel;
+
+//ntfy password label
+@property (strong, nonatomic) NSTextField *ntfyPasswordLabel;
 
 /* EVENTS VIEW */
 

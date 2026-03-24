@@ -7,8 +7,6 @@
 //  copyright (c) 2018 Objective-See. All rights reserved.
 //
 
-#import "HelperComms.h"
-
 @import Foundation;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,14 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 {
 
 }
-
-/* PROPERTIES */
-
-//helper installed & connected
-@property(nonatomic) BOOL gotHelp;
-
-//daemom comms object
-@property(nonatomic, retain, nullable) HelperComms* xpcComms;
 
 /* METHODS */
 
@@ -40,10 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 //uninstall
 -(BOOL)uninstall:(BOOL)full;
 
-//remove helper (daemon)
+//no-op: kept for AppDelegate.m compatibility
 -(void)removeHelper;
 
 @end
 
 NS_ASSUME_NONNULL_END
-

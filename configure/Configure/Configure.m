@@ -1,7 +1,7 @@
 //
-//  file: Configure.h
+//  file: Configure.m
 //  project: DND (config)
-//  description: configure DND, install/uninstall (header)
+//  description: configure DND, install/uninstall
 //
 //  created by Patrick Wardle
 //  copyright (c) 2018 Objective-See. All rights reserved.
@@ -13,344 +13,123 @@
 #import "Utilities.h"
 
 @import Foundation;
-#import <Security/Authorization.h>
-#import <ServiceManagement/ServiceManagement.h>
+@import ServiceManagement;
 
 @implementation Configure
-
-@synthesize gotHelp;
-@synthesize xpcComms;
 
 //invokes appropriate install || uninstall logic
 -(BOOL)configure:(NSInteger)parameter
 {
     //return var
     BOOL wasConfigured = NO;
-    
-    //get help
-    if(YES != [self initHelper])
-    {
-        //err msg
-        logMsg(LOG_ERR, @"ERROR: failed to init helper tool");
-        
-        //bail
-        goto bail;
-    }
-    
+
     //install
     if(ACTION_INSTALL_FLAG == parameter)
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"installing...");
-        
+
         //already installed?
         // perform (partial) uninstall first
         if(YES == [self isInstalled])
         {
             //dbg msg
             logMsg(LOG_DEBUG, @"already installed, so uninstalling (partially)...");
-            
-            //uninstall
-            // but do partial
+
+            //uninstall (partial)
             if(YES != [self uninstall:UNINSTALL_PARTIAL])
             {
                 //bail
                 goto bail;
             }
-            
+
             //dbg msg
             logMsg(LOG_DEBUG, @"(partially) uninstalled");
         }
-        
+
         //install
         if(YES != [self install])
         {
             //bail
             goto bail;
         }
-        
+
         //dbg msg
         logMsg(LOG_DEBUG, @"installed!");
     }
-    //uninstall extension
+    //uninstall
     else if(ACTION_UNINSTALL_FLAG == parameter)
     {
         //dbg msg
         logMsg(LOG_DEBUG, @"uninstalling...");
-        
-        //uninstall
-        // do full to remove all
+
+        //uninstall (full)
         if(YES != [self uninstall:UNINSTALL_FULL])
         {
             //bail
             goto bail;
         }
-        
+
         //dbg msg
         logMsg(LOG_DEBUG, @"uninstalled!");
     }
 
     //no errors
     wasConfigured = YES;
-    
+
 bail:
-    
+
     return wasConfigured;
 }
 
 //determine if installed
-// simply checks if extension binary exists
+// checks if app exists in /Applications or daemon binary exists in install directory
 -(BOOL)isInstalled
 {
     //flag
     BOOL installed = NO;
-    
-    //launch daemon
-    NSString* launchDaemon = nil;
-    
-    //launch daemon plist
-    NSString* launchDaemonPlist = nil;
-    
+
     //app path
     NSString* appPath = nil;
-    
-    //init path to launch daemon
-    launchDaemon = [INSTALL_DIRECTORY stringByAppendingPathComponent:LAUNCH_DAEMON_BINARY];
-    
-    //init path to launch daemon plist
-    launchDaemonPlist = [@"/Library/LaunchDaemons" stringByAppendingPathComponent:LAUNCH_DAEMON_PLIST];
-    
+
+    //daemon binary
+    NSString* daemonBinary = nil;
+
     //init path to app
     appPath = [@"/Applications" stringByAppendingPathComponent:APP_NAME];
-    
+
     //check for installed components
-    installed = ( (YES == [[NSFileManager defaultManager] fileExistsAtPath:appPath]) ||
-                  (YES == [[NSFileManager defaultManager] fileExistsAtPath:launchDaemon]) ||
-                  (YES == [[NSFileManager defaultManager] fileExistsAtPath:launchDaemonPlist]) );
-    
+    // daemon bundle now lives inside the app, so only check for the app
+    installed = (YES == [[NSFileManager defaultManager] fileExistsAtPath:appPath]);
+
     return installed;
 }
 
-//init helper tool
-// install and establish XPC connection
--(BOOL)initHelper
-{
-    //bail if we're already G2G
-    if(YES == self.gotHelp)
-    {
-        //all set
-        goto bail;
-    }
-    
-    //install
-    if(YES != [self blessHelper])
-    {
-        //err msg
-        logMsg(LOG_ERR, @"ERROR: failed to install helper tool");
-        
-        //bail
-        goto bail;
-    }
-    
-    //init XPC comms
-    xpcComms = [[HelperComms alloc] init];
-    if(nil == xpcComms)
-    {
-        //err msg
-        logMsg(LOG_ERR, @"ERROR: failed to connect to helper tool");
-        
-        //bail
-        goto bail;
-    }
-    
-    //happy
-    self.gotHelp = YES;
-    
-bail:
-    
-    return self.gotHelp;
-}
-
-//install helper tool
-// sets 'wasBlessed' iVar
--(BOOL)blessHelper
-{
-    //flag
-    BOOL wasBlessed = NO;
-    
-    //auth ref
-    AuthorizationRef authRef = NULL;
-    
-    //error
-    CFErrorRef error = NULL;
-    
-    //auth item
-    AuthorizationItem authItem = {};
-    
-    //auth rights
-    AuthorizationRights authRights = {};
-    
-    //auth flags
-    AuthorizationFlags authFlags = 0;
-    
-    //create auth
-    if(errAuthorizationSuccess != AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults, &authRef))
-    {
-        //err msg
-        logMsg(LOG_ERR, @"ERROR: failed to create authorization");
-        
-        //bail
-        goto bail;
-    }
-    
-    //init auth item
-    memset(&authItem, 0x0, sizeof(authItem));
-    
-    //set name
-    authItem.name = kSMRightBlessPrivilegedHelper;
-    
-    //set auth count
-    authRights.count = 1;
-    
-    //set auth items
-    authRights.items = &authItem;
-    
-    //init flags
-    authFlags =  kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
-    
-    //get auth rights
-    if(errAuthorizationSuccess != AuthorizationCopyRights(authRef, &authRights, kAuthorizationEmptyEnvironment, authFlags, NULL))
-    {
-        //err msg
-        logMsg(LOG_ERR, @"ERROR: failed to copy authorization rights");
-        
-        //bail
-        goto bail;
-    }
-    
-    //bless
-    if(YES != (BOOL)SMJobBless(kSMDomainSystemLaunchd, (__bridge CFStringRef)(INSTALLER_HELPER_ID), authRef, &error))
-    {
-        //err msg
-        logMsg(LOG_ERR, [NSString stringWithFormat:@"ERROR: failed to bless job (error: %@)", error]);
-        
-        //bail
-        goto bail;
-    }
-    
-    //happy
-    wasBlessed = YES;
-    
-bail:
-    
-    //free auth ref
-    if(NULL != authRef)
-    {
-        //free
-        AuthorizationFree(authRef, kAuthorizationFlagDefaults);
-        
-        //unset
-        authRef = NULL;
-    }
-    
-    //free error
-    if(NULL != error)
-    {
-        //release
-        CFRelease(error);
-        
-        //unset
-        error = NULL;
-    }
-    
-    return wasBlessed;
-}
-
-//remove helper (daemon)
--(void)removeHelper
-{
-    //if needed
-    // tell helper to remove itself
-    if(YES == self.gotHelp)
-    {
-        //dbg msg
-        logMsg(LOG_DEBUG, @"invoking XPC method: remove");
-        
-        //remove
-        [self.xpcComms remove];
-    }
-    
-    return;
-}
-
 //install
+// runs privileged shell script to copy files; the main app registers the daemon
+// and login item via SMAppService when it first launches from /Applications/
 -(BOOL)install
 {
     //return/status var
-    __block BOOL wasInstalled = NO;
-    
-    //path to login item
-    NSString* loginItem = nil;
-    
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
-    //define block
-    void (^block)(NSNumber *) = ^(NSNumber *result)
-    {
-       //signal sema
-       dispatch_semaphore_signal(semaphore);
-            
-       //save result
-       wasInstalled = (BOOL)(result.intValue == 0);
+    BOOL wasInstalled = NO;
 
-    };
-    
-    //install
-    [xpcComms install:block];
-    
-    //wait for install to be completed by XPC
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"privileged helper item install logic completed (%d)", wasInstalled]);
-    
-    //sanity check
-    // make sure xpc install logic succeeded
-    if(YES != wasInstalled)
-    {
-        //bail
-        goto bail;
-    }
-    
-    //init path to login item
-    loginItem = [NSString pathWithComponents:@[@"/", @"Applications", APP_NAME, @"Contents", @"Library", @"LoginItems", [NSString stringWithFormat:@"%@.app", LOGIN_ITEM_NAME]]];
-    
-    //install login item
-    // can't do this in script since it needs to be executed as logged in user (not r00t)
-    if(YES != toggleLoginItem([NSURL fileURLWithPath:loginItem], ACTION_INSTALL_FLAG))
+    //run privileged shell script (copies Do Not Disturb.app to /Applications/,
+    // and Do Not Disturb.bundle to /Library/Objective-See/DND/)
+    // the script also launches the main app, which registers the daemon via SMAppService
+    if(YES != [self runScript:CMDLINE_FLAG_INSTALL fullUninstall:NO])
     {
         //err msg
-        logMsg(LOG_ERR, @"failed to install login item");
-        
-        //set error
-        wasInstalled = NO;
-        
+        logMsg(LOG_ERR, @"install script failed");
+
         //bail
         goto bail;
     }
-    
-    //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"installed login item (%@)", loginItem]);
-    
+
     //happy
     wasInstalled = YES;
-    
+
 bail:
-    
+
     return wasInstalled;
 }
 
@@ -358,55 +137,192 @@ bail:
 -(BOOL)uninstall:(BOOL)full
 {
     //return/status var
-    __block BOOL wasUninstalled = NO;
-    
-    //wait semaphore
-    dispatch_semaphore_t semaphore = 0;
-    
+    BOOL wasUninstalled = NO;
+
     //path to login item
     NSString* loginItem = nil;
-    
-    //init sema
-    semaphore = dispatch_semaphore_create(0);
-    
-    //define block
-    void (^block)(NSNumber *) = ^(NSNumber *result)
-    {
-        //signal sema
-        dispatch_semaphore_signal(semaphore);
-            
-        //save result
-        wasUninstalled = (BOOL)(result.intValue == 0);
-    };
-    
+
+    //SMAppService for daemon unregistration
+    SMAppService* daemonService = nil;
+
+    //semaphore to wait for async unregister
+    dispatch_semaphore_t sema = nil;
+
+    //unregister error
+    __block NSError* unregError = nil;
+
     //init path to login item
     loginItem = [NSString pathWithComponents:@[@"/", @"Applications", APP_NAME, @"Contents", @"Library", @"LoginItems", [NSString stringWithFormat:@"%@.app", LOGIN_ITEM_NAME]]];
-    
-    //uninstall login item, first
-    // can't do this in script since it needs to be executed as logged in user (not r00t)
+
+    //uninstall login item first
+    // can't do this in script since it needs to be executed as logged in user (not root)
     if(YES != toggleLoginItem([NSURL fileURLWithPath:loginItem], ACTION_UNINSTALL_FLAG))
     {
-        //err msg
+        //err msg (non-fatal)
         logMsg(LOG_ERR, @"failed to uninstall login item");
-        
-        //keep going though...
     }
-    
-    #ifdef DEBUG
     else
     {
         //dbg msg
         logMsg(LOG_DEBUG, [NSString stringWithFormat:@"uninstalled login item (%@)", loginItem]);
     }
-    #endif
-    
-    //uninstall
-    // also sets return var/flag in block
-    [xpcComms uninstall:full reply:block];
-    
-    //wait for install to be completed by XPC
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    
+
+    //unregister the launch daemon via SMAppService
+    daemonService = [SMAppService daemonServiceWithPlistName:LAUNCH_DAEMON_PLIST];
+    if(nil != daemonService)
+    {
+        sema = dispatch_semaphore_create(0);
+
+        [daemonService unregisterWithCompletionHandler:^(NSError* err) {
+            unregError = err;
+            dispatch_semaphore_signal(sema);
+        }];
+
+        //wait for unregister to complete (with timeout)
+        dispatch_semaphore_wait(sema, dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC));
+
+        if(nil != unregError)
+        {
+            //log but don't fail -- may not have been registered
+            logMsg(LOG_ERR, [NSString stringWithFormat:@"SMAppService unregister returned error (non-fatal): %@", unregError]);
+        }
+        else
+        {
+            //dbg msg
+            logMsg(LOG_DEBUG, @"unregistered launch daemon via SMAppService");
+        }
+    }
+
+    //run privileged shell script to remove files
+    if(YES != [self runScript:CMDLINE_FLAG_UNINSTALL fullUninstall:full])
+    {
+        //err msg
+        logMsg(LOG_ERR, @"uninstall script failed");
+
+        //bail
+        goto bail;
+    }
+
+    //happy
+    wasUninstalled = YES;
+
+bail:
+
     return wasUninstalled;
 }
+
+//no-op: privileged helper tool architecture removed; kept for AppDelegate.m compatibility
+-(void)removeHelper
+{
+    return;
+}
+
+//run configure.sh with admin privileges via osascript
+// the script lives in this app bundle's Resources directory
+// passes the Resources path so the script knows where the bundled files are
+-(BOOL)runScript:(NSString*)action fullUninstall:(BOOL)full
+{
+    //result
+    BOOL result = NO;
+
+    //resources path
+    NSString* resourcesPath = nil;
+
+    //path to script
+    NSString* scriptPath = nil;
+
+    //osascript command
+    NSString* osascriptCmd = nil;
+
+    //results
+    NSDictionary* taskResult = nil;
+
+    //exit code
+    int exitCode = -1;
+
+    //get the Resources directory
+    resourcesPath = [[NSBundle mainBundle] resourcePath];
+
+    //get path to configure.sh in this app's Resources
+    scriptPath = [resourcesPath stringByAppendingPathComponent:@"configure.sh"];
+    if(![[NSFileManager defaultManager] fileExistsAtPath:scriptPath])
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"configure.sh not found at %@", scriptPath]);
+
+        //bail
+        goto bail;
+    }
+
+    //make script executable
+    [[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions:@0755} ofItemAtPath:scriptPath error:nil];
+
+    //build osascript command
+    // 'do shell script' prompts for admin password and runs the script as root
+    // argv passed to the script: resources_path action [full_flag]
+    // note: paths are single-quote wrapped; internal single quotes are escaped as '\''
+    //       double quotes are escaped as \" to prevent breaking the outer AppleScript string
+    {
+        //escape single quotes (shell) then double quotes (AppleScript string delimiter)
+        NSString* escapedScript = [[scriptPath
+            stringByReplacingOccurrencesOfString:@"'" withString:@"'\\''"]
+            stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+
+        NSString* escapedResources = [[resourcesPath
+            stringByReplacingOccurrencesOfString:@"'" withString:@"'\\''"]
+            stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+
+        NSString* escapedAction = [[action
+            stringByReplacingOccurrencesOfString:@"'" withString:@"'\\''"]
+            stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+
+        if(YES == full)
+        {
+            osascriptCmd = [NSString stringWithFormat:
+                            @"do shell script \"'%@' '%@' '%@' '1'\" with administrator privileges",
+                            escapedScript, escapedResources, escapedAction];
+        }
+        else
+        {
+            osascriptCmd = [NSString stringWithFormat:
+                            @"do shell script \"'%@' '%@' '%@'\" with administrator privileges",
+                            escapedScript, escapedResources, escapedAction];
+        }
+    }
+
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"running: configure.sh %@ (full=%d)", action, full]);
+
+    //exec osascript
+    taskResult = execTask(@"/usr/bin/osascript", @[@"-e", osascriptCmd], YES);
+
+    //grab exit code
+    if(nil != taskResult[EXIT_CODE])
+    {
+        exitCode = [taskResult[EXIT_CODE] intValue];
+    }
+
+    //check result
+    if(0 != exitCode)
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"configure.sh failed (exit: %d) stderr: %@",
+                         exitCode,
+                         taskResult[STDERR] ? [[NSString alloc] initWithData:taskResult[STDERR] encoding:NSUTF8StringEncoding] : @"(none)"]);
+
+        //bail
+        goto bail;
+    }
+
+    //dbg msg
+    logMsg(LOG_DEBUG, @"configure.sh completed successfully");
+
+    //happy
+    result = YES;
+
+bail:
+
+    return result;
+}
+
 @end

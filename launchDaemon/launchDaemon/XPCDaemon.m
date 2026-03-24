@@ -68,11 +68,11 @@ extern Preferences* preferences;
     return;
 }
 
-//update preferences
+//update preferences (fire-and-forget)
 -(void)updatePreferences:(NSDictionary *)prefs
 {
     //dbg msg
-    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: update preferences (%@)", preferences]);
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: update preferences (%@)", prefs]);
 
     //call into prefs obj to update
     if(YES != [preferences update:prefs])
@@ -80,6 +80,26 @@ extern Preferences* preferences;
         //err msg
         logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to save preferences to %@", PREFS_FILE]);
     }
+
+    return;
+}
+
+//update preferences and reply when done
+// caller blocks on the reply so it knows the save completed before it exits
+-(void)updatePreferencesSync:(NSDictionary *)prefs reply:(void (^)(void))reply
+{
+    //dbg msg
+    logMsg(LOG_DEBUG, [NSString stringWithFormat:@"XPC request: update preferences (sync) (%@)", prefs]);
+
+    //call into prefs obj to update
+    if(YES != [preferences update:prefs])
+    {
+        //err msg
+        logMsg(LOG_ERR, [NSString stringWithFormat:@"failed to save preferences to %@", PREFS_FILE]);
+    }
+
+    //signal caller that save is complete
+    reply();
 
     return;
 }

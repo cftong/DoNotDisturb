@@ -54,19 +54,6 @@
 		CE968A9F1FCC66A300AD6B78 /* prefsAction.png in Resources */ = {isa = PBXBuildFile; fileRef = CE968A9E1FCC66A300AD6B78 /* prefsAction.png */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		CD20A0D920579B170044BCC5 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		1F71B4282F327A6500030C52 /* mainApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mainApp.entitlements; path = mainApp/mainApp.entitlements; sourceTree = "<group>"; };
 		1F71B42A2F327B0000030C52 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
@@ -292,7 +279,6 @@
 				7D564DA61F18434F00B8AAD6 /* Frameworks */,
 				7D564DA71F18434F00B8AAD6 /* Resources */,
 				7D16D6971F650FF400DB3161 /* ShellScript */,
-				CD20A0D920579B170044BCC5 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -397,7 +383,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rm -rf   \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\n\n#archiving\nif [[ $BUILT_PRODUCTS_DIR = *\"ArchiveIntermediates\"* ]]; then\n   cp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\n\n#normal build\nelse\n    cp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\nfi\n";
+			shellScript = "DAEMON_PROJECT=\"$PROJECT_DIR/../launchDaemon/launchDaemon.xcodeproj\"\nDAEMON_LOCAL_BUILD=\"$PROJECT_DIR/../launchDaemon/build/Release\"\n\n# Build daemon targets into their local build dir\nxcodebuild -project \"$DAEMON_PROJECT\" \\\n    -target launchDaemon \\\n    -target launchDaemonBundle \\\n    -configuration Release \\\n    build\n\n# Copy login item helper into app's Contents/Library/LoginItems\nrm -rf   \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\n\nif [[ $BUILT_PRODUCTS_DIR = *\"ArchiveIntermediates\"* ]]; then\n    cp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\nelse\n    cp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb Helper.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems\"\nfi\n\n# Copy daemon bundle into app's Contents/Library/LaunchDaemons\n# The bundle is already properly signed by the launchDaemonBundle target (plist included before signing)\nrm -rf   \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\ncp -R -f \"$DAEMON_LOCAL_BUILD/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons/\"\n# SMAppService.daemonServiceWithPlistName: looks for the plist at the TOP level of\n# Contents/Library/LaunchDaemons/, not inside the bundle. Copy it there so registration succeeds.\ncp -f \"$DAEMON_LOCAL_BUILD/Do Not Disturb.bundle/Contents/Resources/ca.tarapore.dnd.plist\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -554,7 +540,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -579,7 +565,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;

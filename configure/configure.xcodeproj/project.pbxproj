@@ -23,6 +23,7 @@
 		CD17D55320104EE700F798D7 /* AboutWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD17D54B20104EE700F798D7 /* AboutWindowController.m */; };
 		CD17D55E201148F900F798D7 /* configure.sh in Resources */ = {isa = PBXBuildFile; fileRef = CD17D55D201148F900F798D7 /* configure.sh */; };
 		CD17D56320116C3800F798D7 /* ca.tarapore.dnd.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */; };
+		BB001122334455667788AA02 /* ca.tarapore.dnd.plist in Copy LaunchDaemons */ = {isa = PBXBuildFile; fileRef = CD17D56220116C3800F798D7 /* ca.tarapore.dnd.plist */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CD2F4082204B462E0066673E /* dndText.png in Resources */ = {isa = PBXBuildFile; fileRef = CDAAC24A20226DFB0032F2E6 /* dndText.png */; };
 		CD3307AE203567D500F10D71 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD3307AD203567D400F10D71 /* Assets.xcassets */; };
 		CD73DA912004629D001FFC84 /* HelperInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = CD73DA902004629D001FFC84 /* HelperInterface.m */; };
@@ -82,6 +83,17 @@
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB001122334455667788AA03 /* Copy LaunchDaemons */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "Contents/Library/LaunchDaemons";
+			dstSubfolderSpec = 16;
+			files = (
+				BB001122334455667788AA02 /* ca.tarapore.dnd.plist in Copy LaunchDaemons */,
+			);
+			name = "Copy LaunchDaemons";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -128,6 +140,7 @@
 		CDAAC24A20226DFB0032F2E6 /* dndText.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = dndText.png; path = ../../shared/images/dndText.png; sourceTree = "<group>"; };
 		CDFA08CD213E3C280089758C /* malwarebytes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = malwarebytes.png; path = Images/malwarebytes.png; sourceTree = "<group>"; };
 		CDFA08D0213E3DD50089758C /* digita.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = digita.png; path = Images/digita.png; sourceTree = "<group>"; };
+		E661BEB24AB0DCDED447C09C /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Shared.xcconfig"; path = "../../Shared.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +176,7 @@
 		29B97314FDCFA39411CA2CEA /* SMJobBless */ = {
 			isa = PBXGroup;
 			children = (
+				E661BEB24AB0DCDED447C09C /* Shared.xcconfig */,
 				1F71B4272F32790800030C52 /* configure.entitlements */,
 				CD17D56120116C2000F798D7 /* SupportingFiles */,
 				CD17D55C201148F900F798D7 /* Script */,
@@ -304,6 +318,7 @@
 				4BE49098104463C5006BE471 /* Copy Helper */,
 				CD17D55F20115E5E00F798D7 /* ShellScript */,
 				CD20A0D220579A1B0044BCC5 /* Copy Frameworks */,
+				BB001122334455667788AA03 /* Copy LaunchDaemons */,
 			);
 			buildRules = (
 			);
@@ -325,11 +340,11 @@
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
 					4BE4905C10445E0A006BE471 = {
-						DevelopmentTeam = 7KGHU7S762;
+						DevelopmentTeam = L858T78JKU;
 						ProvisioningStyle = Automatic;
 					};
 					8D1107260486CEB800E47090 = {
-						DevelopmentTeam = 7KGHU7S762;
+						DevelopmentTeam = L858T78JKU;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -386,7 +401,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#archiving\nif [[ $BUILT_PRODUCTS_DIR = *\"ArchiveIntermediates\"* ]]; then\n\ncp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\ncp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n\n#normal build\nelse\n\ncp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\nrm -rf \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/Do Not Disturb.bundle\"\ncp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\n\nfi\n";
+			shellScript = "#archiving\nif [[ $BUILT_PRODUCTS_DIR = *\"ArchiveIntermediates\"* ]]; then\n\ncp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\ncp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\ncp -R -f \"$PROJECT_TEMP_ROOT/UninstalledProducts/macosx/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\ncp -f \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/ca.tarapore.dnd.plist\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\n\n#normal build\nelse\n\ncp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb.app\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\nrm -rf \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/Do Not Disturb.bundle\"\ncp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\nrm -rf \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons/Do Not Disturb.bundle\"\ncp -R -f \"$BUILT_PRODUCTS_DIR/Do Not Disturb.bundle\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\ncp -f \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/ca.tarapore.dnd.plist\" \"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LaunchDaemons\"\n\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -438,7 +453,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -467,7 +482,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -500,7 +515,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -527,7 +542,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 7KGHU7S762;
+				DEVELOPMENT_TEAM = L858T78JKU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/Mac";
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;

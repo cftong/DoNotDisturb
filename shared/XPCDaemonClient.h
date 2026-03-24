@@ -37,8 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
 // note: synchronous
 -(NSDictionary* _Nullable)getPreferences:(NSString* _Nullable)preference;
 
-//update (save) preferences
+//update (save) preferences (fire-and-forget)
 -(void)updatePreferences:(NSDictionary*)preferences;
+
+//update (save) preferences and block until daemon confirms save
+// use when the caller may exit immediately after (e.g. windowWillClose:)
+-(void)updatePreferencesSync:(NSDictionary*)preferences;
 
 //delete event file
 -(void)deleteEventFile:(NSString*)filePath;

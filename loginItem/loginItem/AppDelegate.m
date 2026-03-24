@@ -13,6 +13,8 @@
 #import "Utilities.h"
 #import "AppDelegate.h"
 #import "XPCDaemonClient.h"
+#import "XPCUser.h"
+#import <UserNotifications/UserNotifications.h>
 
 @interface AppDelegate ()
 
@@ -26,6 +28,7 @@
 @synthesize statusBarMenuController;
 @synthesize screenLockObserver;
 @synthesize screenUnlockObserver;
+@synthesize notificationDelegate;
 
 //app's main interface
 // load status bar (unless prefs say otherwise) and kick off monitor
@@ -39,6 +42,26 @@
     
     //dbg msg
     logMsg(LOG_DEBUG, @"starting DND login item");
+
+    //set UNUserNotificationCenter delegate before any notifications can arrive
+    // must be done before the app finishes launching per Apple docs
+    // retain it explicitly - UNUserNotificationCenter.delegate is a weak reference
+    self.notificationDelegate = [[XPCUser alloc] init];
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self.notificationDelegate;
+
+    //request notification authorization (alerts + sound)
+    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound)
+                                                                        completionHandler:^(BOOL granted, NSError* error)
+    {
+        if(granted)
+        {
+            logMsg(LOG_DEBUG, @"notification authorization granted");
+        }
+        else
+        {
+            logMsg(LOG_ERR, [NSString stringWithFormat:@"notification authorization denied: %@", error]);
+        }
+    }];
     
     //init deamon client
     daemonComms = [[XPCDaemonClient alloc] init];
@@ -285,8 +308,8 @@ bail:
 //button handler
 -(IBAction)touchBarButtonHandler:(id)sender
 {
-    //show notification
-    [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
+    //remove all delivered DND notifications
+    [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
     
     //unset
     // will hide

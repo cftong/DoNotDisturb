@@ -257,6 +257,8 @@ bail:
 
     //verify app
     // make sure it's signed, and by our signing auth
+    // skip in debug builds to allow locally-built/unsigned installs
+    #ifndef DEBUG
     if(noErr != verifyApp(appCopy, SIGNING_TEAM_ID))
     {
         //err msg
@@ -265,6 +267,7 @@ bail:
         //bail
         goto bail;
     }
+    #endif
     
     //happy
     validatedApp = appCopy;
