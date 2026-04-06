@@ -45,6 +45,11 @@ static NSString* const kLocalPrefsKey = @"cachedDaemonPreferences";
     //apply incoming keys (overwrites per-key)
     [merged addEntriesFromDictionary:preferences];
 
+    //strip transient keys that must never be persisted locally
+    // PREF_SCREEN_LOCKED is a signal (sent by loginItem on screen lock/unlock) that the
+    // daemon handles then discards; caching it would corrupt USB monitor behaviour
+    [merged removeObjectForKey:PREF_SCREEN_LOCKED];
+
     //save merged result
     [[NSUserDefaults standardUserDefaults] setObject:merged forKey:kLocalPrefsKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -191,6 +196,38 @@ static NSString* const kLocalPrefsKey = @"cachedDaemonPreferences";
     //daemon returned prefs? cache them locally
     if(nil != preferences)
     {
+        //check whether our local cache has keys the daemon is missing
+        // this happens when prefs were set while the daemon was unavailable (e.g. crashing)
+        // push any such keys back to the daemon now so it catches up
+        NSDictionary* localCache = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kLocalPrefsKey];
+        if(nil != localCache)
+        {
+            NSMutableDictionary* missingInDaemon = [NSMutableDictionary dictionary];
+            for(NSString* key in localCache)
+            {
+                //never push transient screen-lock signal
+                if([key isEqualToString:PREF_SCREEN_LOCKED]) { continue; }
+
+                //key is in local cache but absent from daemon's current prefs
+                if(nil == preferences[key])
+                {
+                    missingInDaemon[key] = localCache[key];
+                }
+            }
+
+            if(missingInDaemon.count > 0)
+            {
+                logMsg(LOG_DEBUG, [NSString stringWithFormat:@"getPreferences: syncing %lu cached key(s) back to daemon: %@",
+                                   (unsigned long)missingInDaemon.count, missingInDaemon.allKeys]);
+
+                //fire-and-forget: push missing prefs to daemon (call proxy directly to avoid re-caching)
+                [[self.xpcServiceConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+                {
+                    logMsg(LOG_ERR, [NSString stringWithFormat:@"getPreferences: failed to sync cached prefs to daemon: %@", proxyError]);
+                }] updatePreferences:missingInDaemon];
+            }
+        }
+
         [self cachePreferencesLocally:preferences];
     }
     else

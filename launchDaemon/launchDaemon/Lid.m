@@ -688,6 +688,77 @@ bail:
                 {
                     //dbg msg
                     logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"saved photo to %@", photoPath]);
+
+                    //send photo via ntfy if ntfy notifications are enabled
+                    if( (YES == [currentPrefs[PREF_NTFY_ACTION] boolValue]) &&
+                        (0 != [currentPrefs[PREF_NTFY_TOPIC] length]) )
+                    {
+                        //ntfy server (default to ntfy.sh if not set)
+                        NSString* photoNtfyServer = currentPrefs[PREF_NTFY_SERVER];
+                        if(0 == [photoNtfyServer length])
+                        {
+                            photoNtfyServer = @"https://ntfy.sh";
+                        }
+
+                        //strip trailing slash
+                        if([photoNtfyServer hasSuffix:@"/"])
+                        {
+                            photoNtfyServer = [photoNtfyServer substringToIndex:photoNtfyServer.length - 1];
+                        }
+
+                        //build URL
+                        NSString* photoNtfyURLStr = [NSString stringWithFormat:@"%@/%@", photoNtfyServer, currentPrefs[PREF_NTFY_TOPIC]];
+
+                        //event description
+                        NSString* photoNtfyEventDesc = ([eventType isEqualToString:@"usb"]) ? @"USB Insertion" : @"Lid Open";
+
+                        //build curl args to upload photo as file body
+                        NSMutableArray* photoArgs = [NSMutableArray arrayWithObjects:
+                            @"-s", @"-o", @"/dev/null",
+                            @"-T", photoPath,
+                            @"-H", @"Content-Type: image/jpeg",
+                            @"-H", [NSString stringWithFormat:@"Filename: %@", [photoPath lastPathComponent]],
+                            @"-H", [NSString stringWithFormat:@"Title: DND Photo: %@", photoNtfyEventDesc],
+                            @"-H", @"Priority: high",
+                            @"-H", @"Tags: camera",
+                            photoNtfyURLStr,
+                            nil];
+
+                        //add auth headers (same as text notification)
+                        NSInteger photoNtfyAuthType = [currentPrefs[PREF_NTFY_AUTH_TYPE] integerValue];
+                        if(NTFY_AUTH_TOKEN == photoNtfyAuthType && 0 != [currentPrefs[PREF_NTFY_TOKEN] length])
+                        {
+                            [photoArgs addObject:@"-H"];
+                            [photoArgs addObject:[NSString stringWithFormat:@"Authorization: Bearer %@", currentPrefs[PREF_NTFY_TOKEN]]];
+                        }
+                        else if(NTFY_AUTH_BASIC == photoNtfyAuthType &&
+                                0 != [currentPrefs[PREF_NTFY_USERNAME] length] &&
+                                0 != [currentPrefs[PREF_NTFY_PASSWORD] length])
+                        {
+                            [photoArgs addObject:@"-u"];
+                            [photoArgs addObject:[NSString stringWithFormat:@"%@:%@",
+                                                 currentPrefs[PREF_NTFY_USERNAME],
+                                                 currentPrefs[PREF_NTFY_PASSWORD]]];
+                        }
+
+                        //dbg msg
+                        logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"sending photo via ntfy to %@", photoNtfyURLStr]);
+
+                        //upload photo via curl (-T uploads file as request body)
+                        NSDictionary* photoNtfyResults = execTask(@"/usr/bin/curl", photoArgs, YES);
+
+                        //check result
+                        if(nil != photoNtfyResults[EXIT_CODE] && 0 == [photoNtfyResults[EXIT_CODE] intValue])
+                        {
+                            //dbg msg
+                            logMsg(LOG_DEBUG|LOG_TO_FILE, [NSString stringWithFormat:@"sent photo via ntfy to %@", photoNtfyURLStr]);
+                        }
+                        else
+                        {
+                            //err msg
+                            logMsg(LOG_ERR|LOG_TO_FILE, [NSString stringWithFormat:@"failed to send photo via ntfy to %@: %@", photoNtfyURLStr, photoNtfyResults]);
+                        }
+                    }
                 }
             }];
         }
